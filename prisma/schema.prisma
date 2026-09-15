@@ -1,0 +1,259 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model StaffSchedule {
+  id        String    @id @default(cuid())
+  staffId   String
+  day       String
+  status    DayStatus @default(WORKING)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  staff     User      @relation(fields: [staffId], references: [id], onDelete: Cascade)
+
+  @@unique([staffId, day])
+}
+
+model Attendance {
+  id          String           @id @default(cuid())
+  staffId     String
+  date        DateTime
+  status      AttendanceStatus @default(PRESENT)
+  note        String?
+  createdAt   DateTime         @default(now())
+  checkInTime DateTime         @default(now())
+  updatedAt   DateTime?        @updatedAt
+  staff       User             @relation(fields: [staffId], references: [id], onDelete: Cascade)
+
+  @@unique([staffId, date])
+}
+
+model LeaveRequest {
+  id        String      @id @default(cuid())
+  staffId   String
+  startDate DateTime
+  endDate   DateTime
+  reason    String
+  status    LeaveStatus @default(PENDING)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  staff     User        @relation(fields: [staffId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id                      String              @id @default(cuid())
+  name                    String
+  email                   String              @unique
+  password                String
+  role                    Role                @default(CUSTOMER)
+  isEmailVerified         Boolean             @default(false)
+  isApproved              Boolean             @default(true)
+  verificationToken       String?
+  verificationTokenExpiry DateTime?
+  resetToken              String?
+  resetTokenExpiry        DateTime?
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
+  isBlocked               Boolean             @default(false)
+  appointmentsAsCustomer  Appointment[]       @relation("CustomerAppointments")
+  appointmentsAsStaff     Appointment[]       @relation("StaffAppointments")
+  appointmentReviews      AppointmentReview[]
+  attendances             Attendance[]
+  leaveRequests           LeaveRequest[]
+  notifications           Notification[]
+  portfolioReviews        PortfolioReview[]
+  portfolio               StaffPortfolio[]
+  staffProfile            StaffProfile?
+  staffSchedules          StaffSchedule[]
+}
+
+model StaffPortfolio {
+  id          String            @id @default(cuid())
+  staffId     String
+  title       String
+  imageUrl    String
+  description String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  price       Float             @default(0)
+  reviews     PortfolioReview[]
+  staff       User              @relation(fields: [staffId], references: [id], onDelete: Cascade)
+}
+
+model StaffProfile {
+  id                  String   @id @default(cuid())
+  staffId             String   @unique
+  profilePicture      String?
+  fullName            String
+  phoneNumber         String
+  email               String
+  profession          String
+  expertise           String[]
+  bio                 String?
+  yearsOfExperience   Int?
+  specializedServices String[]
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  staff               User     @relation(fields: [staffId], references: [id], onDelete: Cascade)
+}
+
+model Category {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  isActive  Boolean   @default(true)
+  services  Service[]
+}
+
+model Service {
+  id           String        @id @default(cuid())
+  name         String
+  description  String?
+  duration     Int
+  price        Float
+  categoryId   String
+  status       Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  appointments Appointment[]
+  category     Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+}
+
+model Appointment {
+  id            String             @id @default(cuid())
+  customerId    String
+  staffId       String?
+  serviceId     String
+  date          DateTime
+  time          String
+  status        AppointmentStatus  @default(PENDING)
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  endTime       String?
+  paymentMethod PaymentMethod      @default(PAY_AT_SALON)
+  paymentStatus PaymentStatus      @default(PENDING)
+  customer      User               @relation("CustomerAppointments", fields: [customerId], references: [id])
+  service       Service            @relation(fields: [serviceId], references: [id])
+  staff         User?              @relation("StaffAppointments", fields: [staffId], references: [id])
+  review        AppointmentReview?
+}
+
+model BusinessHour {
+  id        String           @id @default(cuid())
+  day       String           @unique
+  type      BusinessHourType @default(NORMAL)
+  openTime  String           @default("09:00")
+  closeTime String           @default("22:00")
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+}
+
+model SpecialBusinessHour {
+  id        String           @id @default(cuid())
+  date      DateTime         @unique
+  type      BusinessHourType @default(NORMAL)
+  openTime  String?
+  closeTime String?
+  reason    String?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+}
+
+model PortfolioReview {
+  id          String         @id @default(cuid())
+  portfolioId String
+  customerId  String
+  rating      Int
+  comment     String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  customer    User           @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  portfolio   StaffPortfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+
+  @@unique([portfolioId, customerId])
+}
+
+model AppointmentReview {
+  id            String      @id @default(cuid())
+  appointmentId String      @unique
+  customerId    String
+  rating        Int
+  comment       String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  customer      User        @relation(fields: [customerId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id            String   @id @default(cuid())
+  userId        String
+  title         String
+  message       String
+  type          String
+  isRead        Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  appointmentId String?
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  ADMIN
+  STAFF
+  CUSTOMER
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  REJECTED
+  CANCELLED
+  COMPLETED
+  IN_PROGRESS
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LEAVE
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum DayStatus {
+  WORKING
+  OFF
+}
+
+enum BusinessHourType {
+  NORMAL
+  FULL_DAY
+  CLOSED
+}
+
+enum PaymentMethod {
+  PAY_AT_SALON
+  EASYPAISA
+  JAZZCASH
+  SADAPAY
+  CARD
+  BANK_TRANSFER
+  RAAST
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
