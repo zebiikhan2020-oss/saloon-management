@@ -175,6 +175,7 @@ export async function POST(request) {
           endTime,
           paymentMethod: "EASYPAISA",
           paymentStatus: "PAID",
+          priceAtBooking: service.price,
           status: "CONFIRMED",
         },
       });

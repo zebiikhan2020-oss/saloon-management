@@ -17,6 +17,38 @@ export default function AdminUsersPage() {
   const [profileLoading, setProfileLoading] = useState(null);
 
   // ===============================
+  // PAGINATION
+  // ===============================
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  // ===============================
+  // DARK MODE
+  // ===============================
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    const updateTheme = () => {
+      setDarkMode(
+        document.documentElement.classList.contains("dark")
+      );
+    };
+
+    updateTheme();
+
+    const observer = new MutationObserver(() => {
+      updateTheme();
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  // ===============================
   // FETCH USERS
   // ===============================
   async function fetchUsers() {
@@ -114,7 +146,9 @@ export default function AdminUsersPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || "Failed to fetch staff profile");
+        throw new Error(
+          data.message || "Failed to fetch staff profile"
+        );
       }
 
       setSelectedStaff(data.staff);
@@ -152,6 +186,31 @@ export default function AdminUsersPage() {
   }, [users, search, roleFilter, statusFilter]);
 
   // ===============================
+  // RESET PAGE WHEN FILTER CHANGES
+  // ===============================
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, roleFilter, statusFilter]);
+
+  // ===============================
+  // PAGINATION CALCULATIONS
+  // ===============================
+  const totalPages = Math.ceil(
+    filteredUsers.length / itemsPerPage
+  );
+
+  const startIndex =
+    (currentPage - 1) * itemsPerPage;
+
+  const endIndex =
+    startIndex + itemsPerPage;
+
+  const currentUsers = filteredUsers.slice(
+    startIndex,
+    endIndex
+  );
+
+  // ===============================
   // COUNTS
   // ===============================
   const totalUsers = users.length;
@@ -169,23 +228,51 @@ export default function AdminUsersPage() {
   ).length;
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-3 sm:px-5 lg:px-8 py-4 sm:py-6">
-
+    <div
+      className={`w-full max-w-7xl mx-auto px-3 sm:px-5 lg:px-8 py-4 sm:py-6 ${
+        darkMode ? "bg-slate-950 text-slate-100" : ""
+      }`}
+    >
       {/* ===============================
           HEADER
       =============================== */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-100 pb-5 mb-5 sm:mb-6">
+      <div
+        className={`flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b pb-5 mb-5 sm:mb-6 ${
+          darkMode
+            ? "border-slate-800"
+            : "border-slate-100"
+        }`}
+      >
         <div className="min-w-0">
-          <span className="inline-flex text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+          <span
+            className={`inline-flex text-[10px] sm:text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full ${
+              darkMode
+                ? "text-blue-400 bg-blue-500/15"
+                : "text-blue-600 bg-blue-50"
+            }`}
+          >
             User Management
           </span>
 
-          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mt-2">
+          <h1
+            className={`text-xl sm:text-2xl font-bold mt-2 ${
+              darkMode
+                ? "text-slate-100"
+                : "text-slate-900"
+            }`}
+          >
             Customers & Staff
           </h1>
 
-          <p className="text-slate-500 text-xs sm:text-sm mt-1">
-            Manage account roles, permissions, and monitor user statuses.
+          <p
+            className={`text-xs sm:text-sm mt-1 ${
+              darkMode
+                ? "text-slate-400"
+                : "text-slate-500"
+            }`}
+          >
+            Manage account roles, permissions, and monitor
+            user statuses.
           </p>
         </div>
       </div>
@@ -194,8 +281,20 @@ export default function AdminUsersPage() {
           MESSAGES
       =============================== */}
       {message && (
-        <div className="mb-4 flex items-start sm:items-center gap-3 rounded-2xl border border-emerald-200/60 bg-emerald-50 px-4 py-3 text-xs sm:text-sm text-emerald-700 shadow-sm">
-          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+        <div
+          className={`mb-4 flex items-start sm:items-center gap-3 rounded-2xl border px-4 py-3 text-xs sm:text-sm shadow-sm ${
+            darkMode
+              ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+              : "border-emerald-200/60 bg-emerald-50 text-emerald-700"
+          }`}
+        >
+          <span
+            className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${
+              darkMode
+                ? "bg-emerald-500/15 text-emerald-400"
+                : "bg-emerald-100 text-emerald-600"
+            }`}
+          >
             ✓
           </span>
 
@@ -204,8 +303,20 @@ export default function AdminUsersPage() {
       )}
 
       {error && (
-        <div className="mb-4 flex items-start sm:items-center gap-3 rounded-2xl border border-rose-200/60 bg-rose-50 px-4 py-3 text-xs sm:text-sm text-rose-700 shadow-sm">
-          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-rose-100 text-rose-600">
+        <div
+          className={`mb-4 flex items-start sm:items-center gap-3 rounded-2xl border px-4 py-3 text-xs sm:text-sm shadow-sm ${
+            darkMode
+              ? "border-rose-500/30 bg-rose-500/10 text-rose-400"
+              : "border-rose-200/60 bg-rose-50 text-rose-700"
+          }`}
+        >
+          <span
+            className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${
+              darkMode
+                ? "bg-rose-500/15 text-rose-400"
+                : "bg-rose-100 text-rose-600"
+            }`}
+          >
             ✕
           </span>
 
@@ -219,69 +330,165 @@ export default function AdminUsersPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-5 sm:mb-6">
 
         {/* TOTAL USERS */}
-        <div className="bg-blue-50/60 rounded-2xl border border-blue-100/80 p-4 sm:p-5">
+        <div
+          className={`rounded-2xl border p-4 sm:p-5 ${
+            darkMode
+              ? "bg-blue-500/10 border-blue-500/20"
+              : "bg-blue-50/60 border-blue-100/80"
+          }`}
+        >
           <div className="flex items-center gap-2.5 sm:gap-3 mb-2">
-            <div className="p-2 bg-blue-100 text-blue-600 rounded-lg text-sm sm:text-base">
+            <div
+              className={`p-2 rounded-lg text-sm sm:text-base ${
+                darkMode
+                  ? "bg-blue-500/15 text-blue-400"
+                  : "bg-blue-100 text-blue-600"
+              }`}
+            >
               👥
             </div>
 
-            <p className="text-[10px] sm:text-xs font-semibold text-blue-700 uppercase tracking-wider">
+            <p
+              className={`text-[10px] sm:text-xs font-semibold uppercase tracking-wider ${
+                darkMode
+                  ? "text-blue-400"
+                  : "text-blue-700"
+              }`}
+            >
               Total Users
             </p>
           </div>
 
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
+          <h2
+            className={`text-xl sm:text-2xl font-bold ${
+              darkMode
+                ? "text-slate-100"
+                : "text-slate-900"
+            }`}
+          >
             {totalUsers}
           </h2>
         </div>
 
         {/* CUSTOMERS */}
-        <div className="bg-sky-50/60 rounded-2xl border border-sky-100/80 p-4 sm:p-5">
+        <div
+          className={`rounded-2xl border p-4 sm:p-5 ${
+            darkMode
+              ? "bg-sky-500/10 border-sky-500/20"
+              : "bg-sky-50/60 border-sky-100/80"
+          }`}
+        >
           <div className="flex items-center gap-2.5 sm:gap-3 mb-2">
-            <div className="p-2 bg-sky-100 text-sky-600 rounded-lg text-sm sm:text-base">
+            <div
+              className={`p-2 rounded-lg text-sm sm:text-base ${
+                darkMode
+                  ? "bg-sky-500/15 text-sky-400"
+                  : "bg-sky-100 text-sky-600"
+              }`}
+            >
               🛍️
             </div>
 
-            <p className="text-[10px] sm:text-xs font-semibold text-sky-700 uppercase tracking-wider">
+            <p
+              className={`text-[10px] sm:text-xs font-semibold uppercase tracking-wider ${
+                darkMode
+                  ? "text-sky-400"
+                  : "text-sky-700"
+              }`}
+            >
               Customers
             </p>
           </div>
 
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
+          <h2
+            className={`text-xl sm:text-2xl font-bold ${
+              darkMode
+                ? "text-slate-100"
+                : "text-slate-900"
+            }`}
+          >
             {totalCustomers}
           </h2>
         </div>
 
         {/* STAFF */}
-        <div className="bg-emerald-50/60 rounded-2xl border border-emerald-100/80 p-4 sm:p-5">
+        <div
+          className={`rounded-2xl border p-4 sm:p-5 ${
+            darkMode
+              ? "bg-emerald-500/10 border-emerald-500/20"
+              : "bg-emerald-50/60 border-emerald-100/80"
+          }`}
+        >
           <div className="flex items-center gap-2.5 sm:gap-3 mb-2">
-            <div className="p-2 bg-emerald-100 text-emerald-600 rounded-lg text-sm sm:text-base">
+            <div
+              className={`p-2 rounded-lg text-sm sm:text-base ${
+                darkMode
+                  ? "bg-emerald-500/15 text-emerald-400"
+                  : "bg-emerald-100 text-emerald-600"
+              }`}
+            >
               ✂️
             </div>
 
-            <p className="text-[10px] sm:text-xs font-semibold text-emerald-700 uppercase tracking-wider">
+            <p
+              className={`text-[10px] sm:text-xs font-semibold uppercase tracking-wider ${
+                darkMode
+                  ? "text-emerald-400"
+                  : "text-emerald-700"
+              }`}
+            >
               Staff Members
             </p>
           </div>
 
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
+          <h2
+            className={`text-xl sm:text-2xl font-bold ${
+              darkMode
+                ? "text-slate-100"
+                : "text-slate-900"
+            }`}
+          >
             {totalStaff}
           </h2>
         </div>
 
         {/* BLOCKED */}
-        <div className="bg-rose-50/60 rounded-2xl border border-rose-100/80 p-4 sm:p-5">
+        <div
+          className={`rounded-2xl border p-4 sm:p-5 ${
+            darkMode
+              ? "bg-rose-500/10 border-rose-500/20"
+              : "bg-rose-50/60 border-rose-100/80"
+          }`}
+        >
           <div className="flex items-center gap-2.5 sm:gap-3 mb-2">
-            <div className="p-2 bg-rose-100 text-rose-600 rounded-lg text-sm sm:text-base">
+            <div
+              className={`p-2 rounded-lg text-sm sm:text-base ${
+                darkMode
+                  ? "bg-rose-500/15 text-rose-400"
+                  : "bg-rose-100 text-rose-600"
+              }`}
+            >
               🚫
             </div>
 
-            <p className="text-[10px] sm:text-xs font-semibold text-rose-700 uppercase tracking-wider">
+            <p
+              className={`text-[10px] sm:text-xs font-semibold uppercase tracking-wider ${
+                darkMode
+                  ? "text-rose-400"
+                  : "text-rose-700"
+              }`}
+            >
               Blocked
             </p>
           </div>
 
-          <h2 className="text-xl sm:text-2xl font-bold text-rose-600">
+          <h2
+            className={`text-xl sm:text-2xl font-bold ${
+              darkMode
+                ? "text-rose-400"
+                : "text-rose-600"
+            }`}
+          >
             {blockedUsers}
           </h2>
         </div>
@@ -290,18 +497,35 @@ export default function AdminUsersPage() {
       {/* ===============================
           FILTERS & SEARCH
       =============================== */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 sm:p-5 mb-5 sm:mb-6">
-
+      <div
+        className={`rounded-2xl shadow-sm border p-4 sm:p-5 mb-5 sm:mb-6 ${
+          darkMode
+            ? "bg-slate-900 border-slate-800"
+            : "bg-white border-slate-100"
+        }`}
+      >
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
 
           {/* SEARCH */}
           <div className="md:col-span-6">
-            <label className="block text-[10px] sm:text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
+            <label
+              className={`block text-[10px] sm:text-xs font-semibold uppercase tracking-wider mb-2 ${
+                darkMode
+                  ? "text-slate-400"
+                  : "text-slate-600"
+              }`}
+            >
               Search Directory
             </label>
 
             <div className="relative">
-              <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+              <span
+                className={`absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none ${
+                  darkMode
+                    ? "text-slate-500"
+                    : "text-slate-400"
+                }`}
+              >
                 <svg
                   className="w-4 h-4"
                   fill="none"
@@ -322,21 +546,35 @@ export default function AdminUsersPage() {
                 placeholder="Search by name or email address..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50/50 border border-slate-200/80 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+                className={`w-full pl-10 pr-4 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition ${
+                  darkMode
+                    ? "bg-slate-800 border border-slate-700 text-slate-100 placeholder:text-slate-500 focus:bg-slate-800"
+                    : "bg-slate-50/50 border border-slate-200/80 text-slate-900 focus:bg-white"
+                }`}
               />
             </div>
           </div>
 
           {/* ROLE */}
           <div className="md:col-span-3">
-            <label className="block text-[10px] sm:text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
+            <label
+              className={`block text-[10px] sm:text-xs font-semibold uppercase tracking-wider mb-2 ${
+                darkMode
+                  ? "text-slate-400"
+                  : "text-slate-600"
+              }`}
+            >
               Filter By Role
             </label>
 
             <select
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
-              className="w-full px-3.5 py-2.5 text-sm bg-slate-50/50 border border-slate-200/80 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+              className={`w-full px-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition ${
+                darkMode
+                  ? "bg-slate-800 border border-slate-700 text-slate-100"
+                  : "bg-slate-50/50 border border-slate-200/80 text-slate-900 focus:bg-white"
+              }`}
             >
               <option value="ALL">All Roles</option>
               <option value="CUSTOMER">Customers Only</option>
@@ -346,14 +584,24 @@ export default function AdminUsersPage() {
 
           {/* STATUS */}
           <div className="md:col-span-3">
-            <label className="block text-[10px] sm:text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
+            <label
+              className={`block text-[10px] sm:text-xs font-semibold uppercase tracking-wider mb-2 ${
+                darkMode
+                  ? "text-slate-400"
+                  : "text-slate-600"
+              }`}
+            >
               Filter By Status
             </label>
 
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full px-3.5 py-2.5 text-sm bg-slate-50/50 border border-slate-200/80 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+              className={`w-full px-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition ${
+                darkMode
+                  ? "bg-slate-800 border border-slate-700 text-slate-100"
+                  : "bg-slate-50/50 border border-slate-200/80 text-slate-900 focus:bg-white"
+              }`}
             >
               <option value="ALL">All Statuses</option>
               <option value="ACTIVE">Active Users</option>
@@ -366,14 +614,37 @@ export default function AdminUsersPage() {
       {/* ===============================
           USER RECORDS
       =============================== */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-
-        <div className="px-4 sm:px-5 py-4 border-b border-slate-100 bg-slate-50/30 flex flex-col xs:flex-row xs:items-center xs:justify-between gap-2">
-          <h2 className="text-sm font-bold text-slate-800">
+      <div
+        className={`rounded-2xl shadow-sm border overflow-hidden ${
+          darkMode
+            ? "bg-slate-900 border-slate-800"
+            : "bg-white border-slate-100"
+        }`}
+      >
+        <div
+          className={`px-4 sm:px-5 py-4 border-b flex flex-col xs:flex-row xs:items-center xs:justify-between gap-2 ${
+            darkMode
+              ? "border-slate-800 bg-slate-800/40"
+              : "border-slate-100 bg-slate-50/30"
+          }`}
+        >
+          <h2
+            className={`text-sm font-bold ${
+              darkMode
+                ? "text-slate-200"
+                : "text-slate-800"
+            }`}
+          >
             User Records
           </h2>
 
-          <span className="w-fit text-[10px] sm:text-[11px] font-semibold text-slate-500 bg-slate-100 px-2 py-1 rounded-md">
+          <span
+            className={`w-fit text-[10px] sm:text-[11px] font-semibold px-2 py-1 rounded-md ${
+              darkMode
+                ? "text-slate-400 bg-slate-800"
+                : "text-slate-500 bg-slate-100"
+            }`}
+          >
             Showing {filteredUsers.length} results
           </span>
         </div>
@@ -381,24 +652,54 @@ export default function AdminUsersPage() {
         {/* LOADING */}
         {loading ? (
           <div className="py-14 sm:py-16 text-center">
-            <div className="animate-spin h-7 w-7 border-2 border-slate-200 border-t-blue-500 rounded-full mx-auto mb-3" />
+            <div
+              className={`animate-spin h-7 w-7 border-2 border-t-blue-500 rounded-full mx-auto mb-3 ${
+                darkMode
+                  ? "border-slate-700"
+                  : "border-slate-200"
+              }`}
+            />
 
-            <p className="text-slate-400 text-xs sm:text-sm font-medium">
+            <p
+              className={`text-xs sm:text-sm font-medium ${
+                darkMode
+                  ? "text-slate-500"
+                  : "text-slate-400"
+              }`}
+            >
               Loading user data...
             </p>
           </div>
         ) : filteredUsers.length === 0 ? (
           /* EMPTY */
           <div className="py-14 sm:py-16 text-center px-4">
-            <div className="w-12 h-12 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">
+            <div
+              className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 text-xl ${
+                darkMode
+                  ? "bg-slate-800 text-slate-500"
+                  : "bg-slate-50 text-slate-400"
+              }`}
+            >
               🤷‍♂️
             </div>
 
-            <h3 className="text-slate-800 font-semibold text-sm">
+            <h3
+              className={`font-semibold text-sm ${
+                darkMode
+                  ? "text-slate-200"
+                  : "text-slate-800"
+              }`}
+            >
               No users found
             </h3>
 
-            <p className="mt-1 text-xs text-slate-400">
+            <p
+              className={`mt-1 text-xs ${
+                darkMode
+                  ? "text-slate-500"
+                  : "text-slate-400"
+              }`}
+            >
               Try adjusting your search query or filter settings.
             </p>
           </div>
@@ -410,7 +711,13 @@ export default function AdminUsersPage() {
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-slate-50/70 border-b border-slate-100 text-slate-400 text-[11px] font-bold uppercase tracking-wider">
+                  <tr
+                    className={`border-b text-[11px] font-bold uppercase tracking-wider ${
+                      darkMode
+                        ? "bg-slate-800/50 border-slate-800 text-slate-500"
+                        : "bg-slate-50/70 border-slate-100 text-slate-400"
+                    }`}
+                  >
                     <th className="px-5 py-4">
                       User Details
                     </th>
@@ -433,25 +740,55 @@ export default function AdminUsersPage() {
                   </tr>
                 </thead>
 
-                <tbody className="divide-y divide-slate-50 text-xs">
-                  {filteredUsers.map((user) => (
+                <tbody
+                  className={`divide-y text-xs ${
+                    darkMode
+                      ? "divide-slate-800"
+                      : "divide-slate-50"
+                  }`}
+                >
+                  {currentUsers.map((user) => (
                     <tr
                       key={user.id}
-                      className="hover:bg-slate-50/50 transition"
+                      className={`transition ${
+                        darkMode
+                          ? "hover:bg-slate-800/40"
+                          : "hover:bg-slate-50/50"
+                      }`}
                     >
                       {/* USER */}
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="h-9 w-9 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm shrink-0">
-                            {user.name?.charAt(0)?.toUpperCase()}
+                          <div
+                            className={`h-9 w-9 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${
+                              darkMode
+                                ? "bg-blue-500/15 text-blue-400"
+                                : "bg-blue-100 text-blue-600"
+                            }`}
+                          >
+                            {user.name
+                              ?.charAt(0)
+                              ?.toUpperCase()}
                           </div>
 
                           <div className="min-w-0">
-                            <p className="font-semibold text-slate-900 text-sm">
+                            <p
+                              className={`font-semibold text-sm ${
+                                darkMode
+                                  ? "text-slate-100"
+                                  : "text-slate-900"
+                              }`}
+                            >
                               {user.name}
                             </p>
 
-                            <p className="text-slate-500 truncate max-w-[220px]">
+                            <p
+                              className={`truncate max-w-[220px] ${
+                                darkMode
+                                  ? "text-slate-500"
+                                  : "text-slate-500"
+                              }`}
+                            >
                               {user.email}
                             </p>
                           </div>
@@ -463,7 +800,11 @@ export default function AdminUsersPage() {
                         <span
                           className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold tracking-wide border ${
                             user.role === "STAFF"
-                              ? "bg-indigo-50 text-indigo-600 border-indigo-200/60"
+                              ? darkMode
+                                ? "bg-indigo-500/15 text-indigo-400 border-indigo-500/30"
+                                : "bg-indigo-50 text-indigo-600 border-indigo-200/60"
+                              : darkMode
+                              ? "bg-sky-500/15 text-sky-400 border-sky-500/30"
                               : "bg-sky-50 text-sky-600 border-sky-200/60"
                           }`}
                         >
@@ -478,7 +819,13 @@ export default function AdminUsersPage() {
                       {/* EMAIL */}
                       <td className="px-5 py-4 whitespace-nowrap">
                         {user.isEmailVerified ? (
-                          <span className="text-emerald-600 font-medium flex items-center gap-1.5">
+                          <span
+                            className={`font-medium flex items-center gap-1.5 ${
+                              darkMode
+                                ? "text-emerald-400"
+                                : "text-emerald-600"
+                            }`}
+                          >
                             <svg
                               className="w-3.5 h-3.5"
                               fill="none"
@@ -496,7 +843,13 @@ export default function AdminUsersPage() {
                             Verified
                           </span>
                         ) : (
-                          <span className="text-amber-500 font-medium flex items-center gap-1.5">
+                          <span
+                            className={`font-medium flex items-center gap-1.5 ${
+                              darkMode
+                                ? "text-amber-400"
+                                : "text-amber-500"
+                            }`}
+                          >
                             <svg
                               className="w-3.5 h-3.5"
                               fill="none"
@@ -519,11 +872,23 @@ export default function AdminUsersPage() {
                       {/* STATUS */}
                       <td className="px-5 py-4 whitespace-nowrap">
                         {user.isBlocked ? (
-                          <span className="inline-flex px-2.5 py-1 rounded-md text-[11px] font-bold bg-rose-50 text-rose-600 border border-rose-100">
+                          <span
+                            className={`inline-flex px-2.5 py-1 rounded-md text-[11px] font-bold border ${
+                              darkMode
+                                ? "bg-rose-500/15 text-rose-400 border-rose-500/30"
+                                : "bg-rose-50 text-rose-600 border-rose-100"
+                            }`}
+                          >
                             Blocked
                           </span>
                         ) : (
-                          <span className="inline-flex px-2.5 py-1 rounded-md text-[11px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-100">
+                          <span
+                            className={`inline-flex px-2.5 py-1 rounded-md text-[11px] font-bold border ${
+                              darkMode
+                                ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
+                                : "bg-emerald-50 text-emerald-600 border-emerald-100"
+                            }`}
+                          >
                             Active
                           </span>
                         )}
@@ -540,7 +905,11 @@ export default function AdminUsersPage() {
                               disabled={
                                 profileLoading === user.id
                               }
-                              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 shadow-sm transition hover:bg-slate-50 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
+                              className={`rounded-xl border px-3 py-1.5 text-xs font-semibold shadow-sm transition disabled:cursor-not-allowed disabled:opacity-50 ${
+                                darkMode
+                                  ? "border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-blue-400"
+                                  : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-blue-600"
+                              }`}
                             >
                               {profileLoading === user.id
                                 ? "Loading..."
@@ -578,36 +947,78 @@ export default function AdminUsersPage() {
             {/* ===============================
                 MOBILE CARDS
             =============================== */}
-            <div className="md:hidden divide-y divide-slate-100">
-              {filteredUsers.map((user) => (
+            <div
+              className={`md:hidden divide-y ${
+                darkMode
+                  ? "divide-slate-800"
+                  : "divide-slate-100"
+              }`}
+            >
+              {currentUsers.map((user) => (
                 <div
                   key={user.id}
-                  className="p-4 sm:p-5 hover:bg-slate-50/50 transition"
+                  className={`p-4 sm:p-5 transition ${
+                    darkMode
+                      ? "hover:bg-slate-800/40"
+                      : "hover:bg-slate-50/50"
+                  }`}
                 >
                   {/* TOP */}
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="h-10 w-10 shrink-0 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
-                        {user.name?.charAt(0)?.toUpperCase()}
+                      <div
+                        className={`h-10 w-10 shrink-0 rounded-full flex items-center justify-center font-bold ${
+                          darkMode
+                            ? "bg-blue-500/15 text-blue-400"
+                            : "bg-blue-100 text-blue-600"
+                        }`}
+                      >
+                        {user.name
+                          ?.charAt(0)
+                          ?.toUpperCase()}
                       </div>
 
                       <div className="min-w-0">
-                        <p className="font-semibold text-slate-900 text-sm truncate">
+                        <p
+                          className={`font-semibold text-sm truncate ${
+                            darkMode
+                              ? "text-slate-100"
+                              : "text-slate-900"
+                          }`}
+                        >
                           {user.name}
                         </p>
 
-                        <p className="text-xs text-slate-500 truncate">
+                        <p
+                          className={`text-xs truncate ${
+                            darkMode
+                              ? "text-slate-500"
+                              : "text-slate-500"
+                          }`}
+                        >
                           {user.email}
                         </p>
                       </div>
                     </div>
 
                     {user.isBlocked ? (
-                      <span className="shrink-0 rounded-md bg-rose-50 border border-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-600 uppercase">
+                      <span
+                        className={`shrink-0 rounded-md px-2 py-0.5 text-[10px] font-bold uppercase border ${
+                          darkMode
+                            ? "bg-rose-500/15 border-rose-500/30 text-rose-400"
+                            : "bg-rose-50 border-rose-100 text-rose-600"
+                        }`}
+                      >
                         Blocked
                       </span>
                     ) : (
-                      <span className="shrink-0 rounded-md bg-emerald-50 border border-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-600 uppercase">
+                      <span
+                        className={`shrink-0 rounded-md px-2 py-0.5 text-[10px] font-bold uppercase border ${
+                          darkMode
+                            ? "bg-emerald-500/15 border-emerald-500/30 text-emerald-400"
+                            : "bg-emerald-50 border-emerald-100 text-emerald-600"
+                        }`}
+                      >
                         Active
                       </span>
                     )}
@@ -615,15 +1026,31 @@ export default function AdminUsersPage() {
 
                   {/* DETAILS */}
                   <div className="mt-4 grid grid-cols-2 gap-2">
-                    <div className="rounded-xl bg-slate-50/80 border border-slate-100 p-3">
-                      <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400">
+                    <div
+                      className={`rounded-xl border p-3 ${
+                        darkMode
+                          ? "bg-slate-800/60 border-slate-700"
+                          : "bg-slate-50/80 border-slate-100"
+                      }`}
+                    >
+                      <p
+                        className={`text-[10px] uppercase font-bold tracking-wider ${
+                          darkMode
+                            ? "text-slate-500"
+                            : "text-slate-400"
+                        }`}
+                      >
                         Role
                       </p>
 
                       <p
                         className={`mt-1 text-xs font-semibold ${
                           user.role === "STAFF"
-                            ? "text-indigo-600"
+                            ? darkMode
+                              ? "text-indigo-400"
+                              : "text-indigo-600"
+                            : darkMode
+                            ? "text-sky-400"
                             : "text-sky-600"
                         }`}
                       >
@@ -633,15 +1060,31 @@ export default function AdminUsersPage() {
                       </p>
                     </div>
 
-                    <div className="rounded-xl bg-slate-50/80 border border-slate-100 p-3">
-                      <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400">
+                    <div
+                      className={`rounded-xl border p-3 ${
+                        darkMode
+                          ? "bg-slate-800/60 border-slate-700"
+                          : "bg-slate-50/80 border-slate-100"
+                      }`}
+                    >
+                      <p
+                        className={`text-[10px] uppercase font-bold tracking-wider ${
+                          darkMode
+                            ? "text-slate-500"
+                            : "text-slate-400"
+                        }`}
+                      >
                         Email Status
                       </p>
 
                       <p
                         className={`mt-1 text-xs font-semibold ${
                           user.isEmailVerified
-                            ? "text-emerald-600"
+                            ? darkMode
+                              ? "text-emerald-400"
+                              : "text-emerald-600"
+                            : darkMode
+                            ? "text-amber-400"
                             : "text-amber-500"
                         }`}
                       >
@@ -662,7 +1105,11 @@ export default function AdminUsersPage() {
                         disabled={
                           profileLoading === user.id
                         }
-                        className="flex-1 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 hover:text-blue-600 disabled:opacity-50"
+                        className={`flex-1 rounded-xl border px-4 py-2.5 text-xs font-semibold shadow-sm transition disabled:opacity-50 ${
+                          darkMode
+                            ? "border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-blue-400"
+                            : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-blue-600"
+                        }`}
                       >
                         {profileLoading === user.id
                           ? "Loading..."
@@ -693,6 +1140,126 @@ export default function AdminUsersPage() {
                 </div>
               ))}
             </div>
+
+            {/* ===============================
+                PAGINATION
+            =============================== */}
+            {!loading && totalPages > 1 && (
+              <div
+                className={`flex flex-col sm:flex-row items-center justify-between gap-3 px-4 sm:px-6 py-4 border-t ${
+                  darkMode
+                    ? "border-slate-800"
+                    : "border-slate-100"
+                }`}
+              >
+                <p
+                  className={`text-xs font-medium ${
+                    darkMode
+                      ? "text-slate-400"
+                      : "text-slate-500"
+                  }`}
+                >
+                  Page{" "}
+                  <span
+                    className={`font-bold ${
+                      darkMode
+                        ? "text-slate-100"
+                        : "text-slate-900"
+                    }`}
+                  >
+                    {currentPage}
+                  </span>{" "}
+                  of{" "}
+                  <span
+                    className={`font-bold ${
+                      darkMode
+                        ? "text-slate-100"
+                        : "text-slate-900"
+                    }`}
+                  >
+                    {totalPages}
+                  </span>
+                </p>
+
+                <div className="flex items-center gap-1.5">
+
+                  {/* PREVIOUS */}
+                  <button
+                    type="button"
+                    disabled={currentPage === 1}
+                    onClick={() =>
+                      setCurrentPage((prev) =>
+                        Math.max(prev - 1, 1)
+                      )
+                    }
+                    className={`px-3 py-2 rounded-xl border text-xs font-semibold transition ${
+                      currentPage === 1
+                        ? darkMode
+                          ? "bg-slate-900 border-slate-800 text-slate-600 cursor-not-allowed"
+                          : "bg-slate-50 border-slate-100 text-slate-300 cursor-not-allowed"
+                        : darkMode
+                        ? "bg-slate-900 border-slate-700 text-slate-300 hover:bg-slate-800"
+                        : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+                    }`}
+                  >
+                    ← Previous
+                  </button>
+
+                  {/* PAGE NUMBERS */}
+                  <div className="flex items-center gap-1">
+                    {Array.from(
+                      { length: totalPages },
+                      (_, index) => index + 1
+                    ).map((page) => (
+                      <button
+                        key={page}
+                        type="button"
+                        onClick={() =>
+                          setCurrentPage(page)
+                        }
+                        className={`min-w-9 h-9 px-2 rounded-xl text-xs font-bold transition ${
+                          currentPage === page
+                            ? "bg-blue-600 text-white shadow-sm"
+                            : darkMode
+                            ? "bg-slate-900 border border-slate-700 text-slate-300 hover:bg-slate-800"
+                            : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* NEXT */}
+                  <button
+                    type="button"
+                    disabled={
+                      currentPage === totalPages
+                    }
+                    onClick={() =>
+                      setCurrentPage((prev) =>
+                        Math.min(
+                          prev + 1,
+                          totalPages
+                        )
+                      )
+                    }
+                    className={`px-3 py-2 rounded-xl border text-xs font-semibold transition ${
+                      currentPage === totalPages
+                        ? darkMode
+                          ? "bg-slate-900 border-slate-800 text-slate-600 cursor-not-allowed"
+                          : "bg-slate-50 border-slate-100 text-slate-300 cursor-not-allowed"
+                        : darkMode
+                        ? "bg-slate-900 border-slate-700 text-slate-300 hover:bg-slate-800"
+                        : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+                    }`}
+                  >
+                    Next →
+                  </button>
+
+                </div>
+              </div>
+            )}
           </>
         )}
       </div>
@@ -706,24 +1273,50 @@ export default function AdminUsersPage() {
           onClick={() => setSelectedStaff(null)}
         >
           <div
-            className="w-full max-w-2xl max-h-[92vh] overflow-y-auto rounded-2xl sm:rounded-3xl bg-white shadow-2xl"
+            className={`w-full max-w-2xl max-h-[92vh] overflow-y-auto rounded-2xl sm:rounded-3xl shadow-2xl ${
+              darkMode
+                ? "bg-slate-900"
+                : "bg-white"
+            }`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* MODAL HEADER */}
-            <div className="flex items-center justify-between border-b border-slate-100 px-4 sm:px-6 py-4 sm:py-5 bg-slate-50/50">
+            <div
+              className={`flex items-center justify-between border-b px-4 sm:px-6 py-4 sm:py-5 ${
+                darkMode
+                  ? "border-slate-800 bg-slate-800/40"
+                  : "border-slate-100 bg-slate-50/50"
+              }`}
+            >
               <div className="min-w-0">
-                <h2 className="text-base sm:text-lg font-bold text-slate-900">
+                <h2
+                  className={`text-base sm:text-lg font-bold ${
+                    darkMode
+                      ? "text-slate-100"
+                      : "text-slate-900"
+                  }`}
+                >
                   Staff Profile
                 </h2>
 
-                <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">
+                <p
+                  className={`text-[11px] sm:text-xs mt-0.5 ${
+                    darkMode
+                      ? "text-slate-500"
+                      : "text-slate-500"
+                  }`}
+                >
                   Professional details and expertise
                 </p>
               </div>
 
               <button
                 onClick={() => setSelectedStaff(null)}
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-200/50 text-slate-500 hover:bg-rose-100 hover:text-rose-600 transition"
+                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition ${
+                  darkMode
+                    ? "bg-slate-800 text-slate-400 hover:bg-rose-500/15 hover:text-rose-400"
+                    : "bg-slate-200/50 text-slate-500 hover:bg-rose-100 hover:text-rose-600"
+                }`}
               >
                 <svg
                   className="w-4 h-4"
@@ -748,14 +1341,28 @@ export default function AdminUsersPage() {
               <div className="flex flex-col items-center text-center">
                 {selectedStaff.staffProfile?.profilePicture ? (
                   <img
-                    src={selectedStaff.staffProfile.profilePicture}
+                    src={
+                      selectedStaff.staffProfile
+                        .profilePicture
+                    }
                     alt={selectedStaff.name}
-                    className="h-20 w-20 sm:h-24 sm:w-24 rounded-full border-4 border-blue-50 object-cover shadow-sm"
+                    className={`h-20 w-20 sm:h-24 sm:w-24 rounded-full border-4 object-cover shadow-sm ${
+                      darkMode
+                        ? "border-blue-500/20"
+                        : "border-blue-50"
+                    }`}
                   />
                 ) : (
-                  <div className="flex h-20 w-20 sm:h-24 sm:w-24 items-center justify-center rounded-full bg-blue-100 text-2xl sm:text-3xl font-bold text-blue-600 shadow-sm border-4 border-blue-50">
+                  <div
+                    className={`flex h-20 w-20 sm:h-24 sm:w-24 items-center justify-center rounded-full text-2xl sm:text-3xl font-bold shadow-sm border-4 ${
+                      darkMode
+                        ? "bg-blue-500/15 text-blue-400 border-blue-500/20"
+                        : "bg-blue-100 text-blue-600 border-blue-50"
+                    }`}
+                  >
                     {(
-                      selectedStaff.staffProfile?.fullName ||
+                      selectedStaff.staffProfile
+                        ?.fullName ||
                       selectedStaff.name ||
                       "S"
                     )
@@ -764,13 +1371,25 @@ export default function AdminUsersPage() {
                   </div>
                 )}
 
-                <h3 className="mt-4 text-lg sm:text-xl font-bold text-slate-900">
+                <h3
+                  className={`mt-4 text-lg sm:text-xl font-bold ${
+                    darkMode
+                      ? "text-slate-100"
+                      : "text-slate-900"
+                  }`}
+                >
                   {selectedStaff.staffProfile?.fullName ||
                     selectedStaff.name ||
                     "No Name"}
                 </h3>
 
-                <p className="mt-1 text-xs sm:text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+                <p
+                  className={`mt-1 text-xs sm:text-sm font-medium px-3 py-1 rounded-full ${
+                    darkMode
+                      ? "text-blue-400 bg-blue-500/15"
+                      : "text-blue-600 bg-blue-50"
+                  }`}
+                >
                   {selectedStaff.staffProfile?.profession ||
                     "Staff Member"}
                 </p>
@@ -778,44 +1397,104 @@ export default function AdminUsersPage() {
 
               {/* BASIC INFORMATION */}
               <div className="mt-7 sm:mt-8">
-                <h4 className="mb-4 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 pb-2">
+                <h4
+                  className={`mb-4 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider border-b pb-2 ${
+                    darkMode
+                      ? "text-slate-500 border-slate-800"
+                      : "text-slate-400 border-slate-100"
+                  }`}
+                >
                   Basic Information
                 </h4>
 
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <div className="rounded-xl bg-slate-50/70 border border-slate-100 p-3.5 sm:p-4">
-                    <p className="text-[10px] sm:text-[11px] uppercase tracking-wider font-bold text-slate-400">
+                  <div
+                    className={`rounded-xl border p-3.5 sm:p-4 ${
+                      darkMode
+                        ? "bg-slate-800/60 border-slate-700"
+                        : "bg-slate-50/70 border-slate-100"
+                    }`}
+                  >
+                    <p
+                      className={`text-[10px] sm:text-[11px] uppercase tracking-wider font-bold ${
+                        darkMode
+                          ? "text-slate-500"
+                          : "text-slate-400"
+                      }`}
+                    >
                       Email Address
                     </p>
 
-                    <p className="mt-1 break-all text-xs sm:text-sm font-semibold text-slate-800">
+                    <p
+                      className={`mt-1 break-all text-xs sm:text-sm font-semibold ${
+                        darkMode
+                          ? "text-slate-200"
+                          : "text-slate-800"
+                      }`}
+                    >
                       {selectedStaff.staffProfile?.email ||
                         selectedStaff.email ||
                         "Not provided"}
                     </p>
                   </div>
 
-                  <div className="rounded-xl bg-slate-50/70 border border-slate-100 p-3.5 sm:p-4">
-                    <p className="text-[10px] sm:text-[11px] uppercase tracking-wider font-bold text-slate-400">
+                  <div
+                    className={`rounded-xl border p-3.5 sm:p-4 ${
+                      darkMode
+                        ? "bg-slate-800/60 border-slate-700"
+                        : "bg-slate-50/70 border-slate-100"
+                    }`}
+                  >
+                    <p
+                      className={`text-[10px] sm:text-[11px] uppercase tracking-wider font-bold ${
+                        darkMode
+                          ? "text-slate-500"
+                          : "text-slate-400"
+                      }`}
+                    >
                       Phone Number
                     </p>
 
-                    <p className="mt-1 text-xs sm:text-sm font-semibold text-slate-800">
+                    <p
+                      className={`mt-1 text-xs sm:text-sm font-semibold ${
+                        darkMode
+                          ? "text-slate-200"
+                          : "text-slate-800"
+                      }`}
+                    >
                       {selectedStaff.staffProfile?.phoneNumber ||
                         "Not provided"}
                     </p>
                   </div>
 
-                  <div className="rounded-xl bg-slate-50/70 border border-slate-100 p-3.5 sm:p-4">
-                    <p className="text-[10px] sm:text-[11px] uppercase tracking-wider font-bold text-slate-400">
+                  <div
+                    className={`rounded-xl border p-3.5 sm:p-4 ${
+                      darkMode
+                        ? "bg-slate-800/60 border-slate-700"
+                        : "bg-slate-50/70 border-slate-100"
+                    }`}
+                  >
+                    <p
+                      className={`text-[10px] sm:text-[11px] uppercase tracking-wider font-bold ${
+                        darkMode
+                          ? "text-slate-500"
+                          : "text-slate-400"
+                      }`}
+                    >
                       Experience
                     </p>
 
-                    <p className="mt-1 text-xs sm:text-sm font-semibold text-slate-800">
-                      {selectedStaff.staffProfile?.yearsOfExperience !==
-                        null &&
-                      selectedStaff.staffProfile?.yearsOfExperience !==
-                        undefined
+                    <p
+                      className={`mt-1 text-xs sm:text-sm font-semibold ${
+                        darkMode
+                          ? "text-slate-200"
+                          : "text-slate-800"
+                      }`}
+                    >
+                      {selectedStaff.staffProfile
+                        ?.yearsOfExperience !== null &&
+                      selectedStaff.staffProfile
+                        ?.yearsOfExperience !== undefined
                         ? `${selectedStaff.staffProfile.yearsOfExperience} ${
                             selectedStaff.staffProfile
                               .yearsOfExperience === 1
@@ -826,15 +1505,31 @@ export default function AdminUsersPage() {
                     </p>
                   </div>
 
-                  <div className="rounded-xl bg-slate-50/70 border border-slate-100 p-3.5 sm:p-4">
-                    <p className="text-[10px] sm:text-[11px] uppercase tracking-wider font-bold text-slate-400">
+                  <div
+                    className={`rounded-xl border p-3.5 sm:p-4 ${
+                      darkMode
+                        ? "bg-slate-800/60 border-slate-700"
+                        : "bg-slate-50/70 border-slate-100"
+                    }`}
+                  >
+                    <p
+                      className={`text-[10px] sm:text-[11px] uppercase tracking-wider font-bold ${
+                        darkMode
+                          ? "text-slate-500"
+                          : "text-slate-400"
+                      }`}
+                    >
                       Account Status
                     </p>
 
                     <p
                       className={`mt-1 text-xs sm:text-sm font-bold ${
                         selectedStaff.isBlocked
-                          ? "text-rose-600"
+                          ? darkMode
+                            ? "text-rose-400"
+                            : "text-rose-600"
+                          : darkMode
+                          ? "text-emerald-400"
                           : "text-emerald-600"
                       }`}
                     >
@@ -849,18 +1544,28 @@ export default function AdminUsersPage() {
               {/* EXPERTISE & SERVICES */}
               <div className="mt-7 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <h4 className="mb-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 pb-2">
+                  <h4
+                    className={`mb-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider border-b pb-2 ${
+                      darkMode
+                        ? "text-slate-500 border-slate-800"
+                        : "text-slate-400 border-slate-100"
+                    }`}
+                  >
                     Expertise
                   </h4>
 
-                  {selectedStaff.staffProfile?.expertise?.length >
-                  0 ? (
+                  {selectedStaff.staffProfile?.expertise
+                    ?.length > 0 ? (
                     <div className="flex flex-wrap gap-2">
                       {selectedStaff.staffProfile.expertise.map(
                         (item, index) => (
                           <span
                             key={index}
-                            className="rounded-md bg-indigo-50 border border-indigo-100 px-2.5 py-1 text-[11px] sm:text-xs font-semibold text-indigo-700"
+                            className={`rounded-md border px-2.5 py-1 text-[11px] sm:text-xs font-semibold ${
+                              darkMode
+                                ? "bg-indigo-500/15 border-indigo-500/30 text-indigo-400"
+                                : "bg-indigo-50 border-indigo-100 text-indigo-700"
+                            }`}
                           >
                             {item}
                           </span>
@@ -868,25 +1573,41 @@ export default function AdminUsersPage() {
                       )}
                     </div>
                   ) : (
-                    <p className="text-xs text-slate-400 italic">
+                    <p
+                      className={`text-xs italic ${
+                        darkMode
+                          ? "text-slate-500"
+                          : "text-slate-400"
+                      }`}
+                    >
                       No expertise added yet.
                     </p>
                   )}
                 </div>
 
                 <div>
-                  <h4 className="mb-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 pb-2">
+                  <h4
+                    className={`mb-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider border-b pb-2 ${
+                      darkMode
+                        ? "text-slate-500 border-slate-800"
+                        : "text-slate-400 border-slate-100"
+                    }`}
+                  >
                     Specialized Services
                   </h4>
 
-                  {selectedStaff.staffProfile?.specializedServices
-                    ?.length > 0 ? (
+                  {selectedStaff.staffProfile
+                    ?.specializedServices?.length > 0 ? (
                     <div className="flex flex-wrap gap-2">
                       {selectedStaff.staffProfile.specializedServices.map(
                         (item, index) => (
                           <span
                             key={index}
-                            className="rounded-md bg-sky-50 border border-sky-100 px-2.5 py-1 text-[11px] sm:text-xs font-semibold text-sky-700"
+                            className={`rounded-md border px-2.5 py-1 text-[11px] sm:text-xs font-semibold ${
+                              darkMode
+                                ? "bg-sky-500/15 border-sky-500/30 text-sky-400"
+                                : "bg-sky-50 border-sky-100 text-sky-700"
+                            }`}
                           >
                             {item}
                           </span>
@@ -894,7 +1615,13 @@ export default function AdminUsersPage() {
                       )}
                     </div>
                   ) : (
-                    <p className="text-xs text-slate-400 italic">
+                    <p
+                      className={`text-xs italic ${
+                        darkMode
+                          ? "text-slate-500"
+                          : "text-slate-400"
+                      }`}
+                    >
                       No services linked yet.
                     </p>
                   )}
@@ -903,14 +1630,38 @@ export default function AdminUsersPage() {
 
               {/* BIO */}
               <div className="mt-7 sm:mt-8">
-                <h4 className="mb-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 pb-2">
+                <h4
+                  className={`mb-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider border-b pb-2 ${
+                    darkMode
+                      ? "text-slate-500 border-slate-800"
+                      : "text-slate-400 border-slate-100"
+                  }`}
+                >
                   Professional Bio
                 </h4>
 
-                <div className="rounded-2xl bg-slate-50/70 border border-slate-100 p-4 sm:p-5">
-                  <p className="whitespace-pre-line text-xs sm:text-sm leading-relaxed text-slate-600">
+                <div
+                  className={`rounded-2xl border p-4 sm:p-5 ${
+                    darkMode
+                      ? "bg-slate-800/60 border-slate-700"
+                      : "bg-slate-50/70 border-slate-100"
+                  }`}
+                >
+                  <p
+                    className={`whitespace-pre-line text-xs sm:text-sm leading-relaxed ${
+                      darkMode
+                        ? "text-slate-300"
+                        : "text-slate-600"
+                    }`}
+                  >
                     {selectedStaff.staffProfile?.bio || (
-                      <span className="italic text-slate-400">
+                      <span
+                        className={`italic ${
+                          darkMode
+                            ? "text-slate-500"
+                            : "text-slate-400"
+                        }`}
+                      >
                         This staff member hasn't added a bio yet.
                       </span>
                     )}
@@ -920,7 +1671,13 @@ export default function AdminUsersPage() {
             </div>
 
             {/* MODAL FOOTER */}
-            <div className="border-t border-slate-100 bg-slate-50/50 px-4 sm:px-6 py-4 flex justify-end">
+            <div
+              className={`border-t px-4 sm:px-6 py-4 flex justify-end ${
+                darkMode
+                  ? "border-slate-800 bg-slate-800/40"
+                  : "border-slate-100 bg-slate-50/50"
+              }`}
+            >
               <button
                 onClick={() => setSelectedStaff(null)}
                 className="w-full sm:w-auto rounded-xl bg-blue-600 px-5 sm:px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 transition"

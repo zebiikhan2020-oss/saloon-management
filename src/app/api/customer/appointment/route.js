@@ -859,6 +859,8 @@ export async function POST(request) {
 
           endTime,
 
+           priceAtBooking: service.price,
+
           status: "PENDING",
         },
       });

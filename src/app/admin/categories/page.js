@@ -10,6 +10,33 @@ export default function AdminCategoriesPage() {
   const [deletingId, setDeletingId] = useState(null);
 
   // =====================================================
+  // DARK MODE
+  // =====================================================
+
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    const updateTheme = () => {
+      setDarkMode(
+        document.documentElement.classList.contains("dark")
+      );
+    };
+
+    updateTheme();
+
+    const observer = new MutationObserver(() => {
+      updateTheme();
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  // =====================================================
   // FETCH CATEGORIES
   // =====================================================
 
@@ -130,17 +157,17 @@ export default function AdminCategoriesPage() {
           HEADER
       ===================================================== */}
 
-      <div className="border-b border-slate-100 pb-5">
+      <div className="border-b border-slate-100 dark:border-slate-800 pb-5">
         <div className="min-w-0">
-          <span className="inline-flex items-center text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-blue-600 bg-blue-50 border border-blue-100 px-3 py-1 rounded-full">
+          <span className="inline-flex items-center text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/15 border border-blue-100 dark:border-blue-500/30 px-3 py-1 rounded-full">
             Categories
           </span>
 
-          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mt-2">
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 mt-2">
             Manage Categories
           </h1>
 
-          <p className="text-slate-500 text-xs sm:text-sm mt-1 leading-relaxed">
+          <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm mt-1 leading-relaxed">
             Add and manage your salon service categories.
           </p>
         </div>
@@ -154,15 +181,15 @@ export default function AdminCategoriesPage() {
         <div
           className={`flex items-start sm:items-center gap-3 rounded-2xl border px-4 py-3 text-xs sm:text-sm shadow-xs ${
             message.includes("success") || message.includes("✅")
-              ? "border-emerald-200/60 bg-emerald-50 text-emerald-700"
-              : "border-rose-200/60 bg-rose-50 text-rose-700"
+              ? "border-emerald-200/60 dark:border-emerald-500/30 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+              : "border-rose-200/60 dark:border-rose-500/30 bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-300"
           }`}
         >
           <span
             className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
               message.includes("success") || message.includes("✅")
-                ? "bg-emerald-100 text-emerald-600"
-                : "bg-rose-100 text-rose-600"
+                ? "bg-emerald-100 dark:bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+                : "bg-rose-100 dark:bg-rose-500/15 text-rose-600 dark:text-rose-400"
             }`}
           >
             {message.includes("success") || message.includes("✅")
@@ -178,16 +205,16 @@ export default function AdminCategoriesPage() {
           ADD CATEGORY
       ===================================================== */}
 
-      <div className="bg-white rounded-2xl shadow-xs border border-slate-100 overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-100 dark:border-slate-800 overflow-hidden">
 
         {/* CARD HEADER */}
 
-        <div className="px-5 sm:px-6 lg:px-7 py-5 border-b border-slate-100 bg-slate-50/30">
-          <h2 className="text-sm sm:text-base font-bold text-slate-900">
+        <div className="px-5 sm:px-6 lg:px-7 py-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-800/40">
+          <h2 className="text-sm sm:text-base font-bold text-slate-900 dark:text-slate-100">
             Add New Category
           </h2>
 
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
             Create a category for organizing your salon services.
           </p>
         </div>
@@ -204,7 +231,7 @@ export default function AdminCategoriesPage() {
               placeholder="Category name e.g Hair, Makeup"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="flex-1 min-w-0 rounded-xl border border-slate-200/80 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+              className="flex-1 min-w-0 rounded-xl border border-slate-200/80 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/60 px-4 py-3 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
               required
             />
 
@@ -223,22 +250,22 @@ export default function AdminCategoriesPage() {
           CATEGORY LIST
       ===================================================== */}
 
-      <div className="bg-white rounded-2xl shadow-xs border border-slate-100 overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-100 dark:border-slate-800 overflow-hidden">
 
         {/* LIST HEADER */}
 
-        <div className="px-5 sm:px-6 lg:px-7 py-4 border-b border-slate-100 bg-slate-50/30 flex flex-col xs:flex-row xs:items-center xs:justify-between gap-2">
+        <div className="px-5 sm:px-6 lg:px-7 py-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-800/40 flex flex-col xs:flex-row xs:items-center xs:justify-between gap-2">
           <div>
-            <h2 className="text-sm sm:text-base font-bold text-slate-900">
+            <h2 className="text-sm sm:text-base font-bold text-slate-900 dark:text-slate-100">
               All Categories
             </h2>
 
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
               Manage your existing salon categories.
             </p>
           </div>
 
-          <span className="w-fit text-[10px] sm:text-[11px] font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md">
+          <span className="w-fit text-[10px] sm:text-[11px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-md">
             {categories.length} total
           </span>
         </div>
@@ -247,15 +274,15 @@ export default function AdminCategoriesPage() {
 
         {categories.length === 0 ? (
           <div className="py-14 sm:py-16 text-center px-4">
-            <div className="w-12 h-12 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">
+            <div className="w-12 h-12 bg-slate-50 dark:bg-slate-800 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">
               📂
             </div>
 
-            <p className="text-slate-500 text-sm font-medium">
+            <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
               No categories found
             </p>
 
-            <p className="text-slate-400 text-xs mt-1 leading-relaxed">
+            <p className="text-slate-400 dark:text-slate-500 text-xs mt-1 leading-relaxed">
               Add a new category above to get started.
             </p>
           </div>
@@ -265,16 +292,16 @@ export default function AdminCategoriesPage() {
               {categories.map((cat) => (
                 <div
                   key={cat.id}
-                  className="border border-slate-100 bg-slate-50/40 rounded-2xl p-4 flex items-center justify-between gap-3 hover:bg-slate-50 hover:border-slate-200 transition"
+                  className="border border-slate-100 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-800/60 rounded-2xl p-4 flex items-center justify-between gap-3 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-200 dark:hover:border-slate-700 transition"
                 >
                   {/* CATEGORY NAME */}
 
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="h-9 w-9 shrink-0 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm">
+                    <div className="h-9 w-9 shrink-0 rounded-xl bg-blue-100 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-sm">
                       {cat.name?.charAt(0)?.toUpperCase()}
                     </div>
 
-                    <span className="font-semibold text-slate-800 text-sm truncate">
+                    <span className="font-semibold text-slate-800 dark:text-slate-100 text-sm truncate">
                       {cat.name}
                     </span>
                   </div>
@@ -285,7 +312,7 @@ export default function AdminCategoriesPage() {
                     type="button"
                     onClick={() => handleDelete(cat.id)}
                     disabled={deletingId === cat.id}
-                    className="shrink-0 rounded-xl bg-rose-50 border border-rose-100 text-rose-600 px-3 py-2 text-[11px] sm:text-xs font-semibold hover:bg-rose-100 active:bg-rose-200 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
+                    className="shrink-0 rounded-xl bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/30 text-rose-600 dark:text-rose-400 px-3 py-2 text-[11px] sm:text-xs font-semibold hover:bg-rose-100 dark:hover:bg-rose-500/20 active:bg-rose-200 dark:active:bg-rose-500/30 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
                   >
                     {deletingId === cat.id
                       ? "Deleting..."

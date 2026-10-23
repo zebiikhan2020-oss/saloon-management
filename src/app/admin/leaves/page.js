@@ -16,11 +16,45 @@ export default function AdminLeaves() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
+  const [darkMode, setDarkMode] = useState(false);
+
+  // =====================================================
+  // PAGINATION
+  // =====================================================
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  // ==============================
+  // WATCH ADMIN LAYOUT THEME
+  // ==============================
+  useEffect(() => {
+    const updateTheme = () => {
+      setDarkMode(
+        document.documentElement.classList.contains("dark")
+      );
+    };
+
+    updateTheme();
+
+    const observer = new MutationObserver(() => {
+      updateTheme();
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   useEffect(() => {
     fetchStaff();
   }, []);
 
   useEffect(() => {
+    setCurrentPage(1);
     fetchLeaves();
   }, [filters]);
 
@@ -85,10 +119,15 @@ export default function AdminLeaves() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Failed to update leave request");
+        throw new Error(
+          data.message || "Failed to update leave request"
+        );
       }
 
-      setMessage(`Leave ${status.toLowerCase()} successfully ✅`);
+      setMessage(
+        `Leave ${status.toLowerCase()} successfully ✅`
+      );
+
       fetchLeaves();
     } catch (error) {
       console.log(error);
@@ -101,16 +140,16 @@ export default function AdminLeaves() {
   const getStatusColor = (status) => {
     switch (status) {
       case "PENDING":
-        return "bg-amber-50 border border-amber-200/60 text-amber-700";
+        return "bg-amber-50 dark:bg-amber-500/15 border border-amber-200/60 dark:border-amber-500/30 text-amber-700 dark:text-amber-300";
 
       case "APPROVED":
-        return "bg-emerald-50 border border-emerald-200/60 text-emerald-700";
+        return "bg-emerald-50 dark:bg-emerald-500/15 border border-emerald-200/60 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300";
 
       case "REJECTED":
-        return "bg-rose-50 border border-rose-200/60 text-rose-700";
+        return "bg-rose-50 dark:bg-rose-500/15 border border-rose-200/60 dark:border-rose-500/30 text-rose-700 dark:text-rose-300";
 
       default:
-        return "bg-slate-100 border border-slate-200/60 text-slate-700";
+        return "bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700 text-slate-700 dark:text-slate-300";
     }
   };
 
@@ -126,21 +165,40 @@ export default function AdminLeaves() {
     (l) => l.status === "REJECTED"
   ).length;
 
+  // =====================================================
+  // PAGINATION CALCULATIONS
+  // =====================================================
+
+  const totalPages = Math.ceil(
+    leaves.length / itemsPerPage
+  );
+
+  const startIndex =
+    (currentPage - 1) * itemsPerPage;
+
+  const endIndex =
+    startIndex + itemsPerPage;
+
+  const currentLeaves = leaves.slice(
+    startIndex,
+    endIndex
+  );
+
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 lg:py-8 space-y-6 sm:space-y-8">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 lg:py-8 space-y-6 sm:space-y-8 bg-slate-50 dark:bg-slate-950 min-h-full">
 
       {/* HEADER */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-5">
         <div>
-          <span className="inline-flex items-center text-[11px] font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+          <span className="inline-flex items-center text-[11px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/15 px-3 py-1 rounded-full">
             Staff Management
           </span>
 
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mt-2">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 mt-2">
             Staff Leave Requests
           </h1>
 
-          <p className="text-slate-500 text-sm mt-1">
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
             Review, approve, or reject employee leave applications.
           </p>
         </div>
@@ -156,8 +214,8 @@ export default function AdminLeaves() {
 
       {/* MESSAGES */}
       {message && (
-        <div className="flex items-start sm:items-center gap-3 rounded-xl border border-emerald-200/60 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 shadow-xs">
-          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold bg-emerald-100">
+        <div className="flex items-start sm:items-center gap-3 rounded-xl border border-emerald-200/60 dark:border-emerald-500/30 bg-emerald-50 dark:bg-emerald-500/10 px-4 py-3 text-sm text-emerald-700 dark:text-emerald-300 shadow-xs">
+          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-500/20">
             ✓
           </span>
 
@@ -166,8 +224,8 @@ export default function AdminLeaves() {
       )}
 
       {error && (
-        <div className="flex items-start sm:items-center gap-3 rounded-xl border border-rose-200/60 bg-rose-50 px-4 py-3 text-sm text-rose-700 shadow-xs">
-          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold bg-rose-100">
+        <div className="flex items-start sm:items-center gap-3 rounded-xl border border-rose-200/60 dark:border-rose-500/30 bg-rose-50 dark:bg-rose-500/10 px-4 py-3 text-sm text-rose-700 dark:text-rose-300 shadow-xs">
+          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold bg-rose-100 dark:bg-rose-500/20">
             ✕
           </span>
 
@@ -179,65 +237,65 @@ export default function AdminLeaves() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 
         {/* PENDING */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-xs flex items-center justify-between">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-100 dark:border-slate-800 shadow-xs flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-amber-600">
+            <p className="text-xs font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400">
               Pending
             </p>
 
-            <p className="text-3xl font-bold text-slate-900 mt-1">
+            <p className="text-3xl font-bold text-slate-900 dark:text-slate-100 mt-1">
               {pendingCount}
             </p>
           </div>
 
-          <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600 font-bold">
+          <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-500/15 border border-amber-100 dark:border-amber-500/30 flex items-center justify-center text-amber-600 dark:text-amber-400 font-bold">
             ⏳
           </div>
         </div>
 
         {/* APPROVED */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-xs flex items-center justify-between">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-100 dark:border-slate-800 shadow-xs flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-emerald-600">
+            <p className="text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
               Approved
             </p>
 
-            <p className="text-3xl font-bold text-slate-900 mt-1">
+            <p className="text-3xl font-bold text-slate-900 dark:text-slate-100 mt-1">
               {approvedCount}
             </p>
           </div>
 
-          <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 font-bold">
+          <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-500/15 border border-emerald-100 dark:border-emerald-500/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 font-bold">
             ✓
           </div>
         </div>
 
         {/* REJECTED */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-xs flex items-center justify-between">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-100 dark:border-slate-800 shadow-xs flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-rose-600">
+            <p className="text-xs font-semibold uppercase tracking-wider text-rose-600 dark:text-rose-400">
               Rejected
             </p>
 
-            <p className="text-3xl font-bold text-slate-900 mt-1">
+            <p className="text-3xl font-bold text-slate-900 dark:text-slate-100 mt-1">
               {rejectedCount}
             </p>
           </div>
 
-          <div className="w-10 h-10 rounded-xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600 font-bold">
+          <div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-500/15 border border-rose-100 dark:border-rose-500/30 flex items-center justify-center text-rose-600 dark:text-rose-400 font-bold">
             ✕
           </div>
         </div>
       </div>
 
       {/* FILTERS */}
-      <div className="bg-white rounded-2xl shadow-xs border border-slate-100 p-4 sm:p-6 lg:p-8 space-y-4">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-100 dark:border-slate-800 p-4 sm:p-6 lg:p-8 space-y-4">
         <div>
-          <h2 className="text-lg sm:text-xl font-bold text-slate-900">
+          <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100">
             Filter Requests
           </h2>
 
-          <p className="text-slate-500 text-sm mt-1">
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
             Filter leave requests by staff or status.
           </p>
         </div>
@@ -246,12 +304,12 @@ export default function AdminLeaves() {
 
           {/* STAFF */}
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-2">
               Staff
             </label>
 
             <select
-              className="w-full border border-slate-200/80 bg-slate-50/50 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+              className="w-full border border-slate-200/80 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/60 rounded-xl px-3 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
               value={filters.staffId}
               onChange={(e) =>
                 setFilters({
@@ -260,10 +318,19 @@ export default function AdminLeaves() {
                 })
               }
             >
-              <option value="">All Staff</option>
+              <option
+                value=""
+                className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
+              >
+                All Staff
+              </option>
 
               {staff.map((s) => (
-                <option key={s.id} value={s.id}>
+                <option
+                  key={s.id}
+                  value={s.id}
+                  className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
+                >
                   {s.name}
                 </option>
               ))}
@@ -272,12 +339,12 @@ export default function AdminLeaves() {
 
           {/* STATUS */}
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-2">
               Status
             </label>
 
             <select
-              className="w-full border border-slate-200/80 bg-slate-50/50 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+              className="w-full border border-slate-200/80 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/60 rounded-xl px-3 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
               value={filters.status}
               onChange={(e) =>
                 setFilters({
@@ -286,10 +353,33 @@ export default function AdminLeaves() {
                 })
               }
             >
-              <option value="">All Status</option>
-              <option value="PENDING">Pending</option>
-              <option value="APPROVED">Approved</option>
-              <option value="REJECTED">Rejected</option>
+              <option
+                value=""
+                className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
+              >
+                All Status
+              </option>
+
+              <option
+                value="PENDING"
+                className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
+              >
+                Pending
+              </option>
+
+              <option
+                value="APPROVED"
+                className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
+              >
+                Approved
+              </option>
+
+              <option
+                value="REJECTED"
+                className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
+              >
+                Rejected
+              </option>
             </select>
           </div>
         </div>
@@ -304,7 +394,7 @@ export default function AdminLeaves() {
                   status: "",
                 })
               }
-              className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition cursor-pointer"
+              className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition cursor-pointer"
             >
               Clear Filters
             </button>
@@ -313,49 +403,49 @@ export default function AdminLeaves() {
       </div>
 
       {/* LEAVE REQUESTS */}
-      <div className="bg-white rounded-2xl shadow-xs border border-slate-100 overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-100 dark:border-slate-800 overflow-hidden">
 
         {/* DESKTOP TABLE */}
         <div className="hidden md:block overflow-x-auto">
-          <table className="min-w-full divide-y divide-slate-100">
+          <table className="min-w-full divide-y divide-slate-100 dark:divide-slate-800">
 
-            <thead className="bg-slate-50/70">
+            <thead className="bg-slate-50/70 dark:bg-slate-800/60">
               <tr>
-                <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
+                <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300">
                   Staff
                 </th>
 
-                <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
+                <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300">
                   Start Date
                 </th>
 
-                <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
+                <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300">
                   End Date
                 </th>
 
-                <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
+                <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300">
                   Reason
                 </th>
 
-                <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
+                <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300">
                   Status
                 </th>
 
-                <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
+                <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300">
                   Action
                 </th>
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-slate-100 bg-white">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900">
               {loading ? (
                 <tr>
                   <td
                     colSpan="6"
-                    className="text-center py-12 text-slate-500 text-sm font-medium"
+                    className="text-center py-12 text-slate-500 dark:text-slate-400 text-sm font-medium"
                   >
                     <div className="flex flex-col items-center gap-2">
-                      <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                      <div className="w-6 h-6 border-2 border-blue-600 dark:border-blue-500 border-t-transparent rounded-full animate-spin"></div>
 
                       Loading leave requests...
                     </div>
@@ -364,34 +454,38 @@ export default function AdminLeaves() {
               ) : leaves.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="text-center py-12">
-                    <div className="w-12 h-12 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">
+                    <div className="w-12 h-12 bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">
                       📅
                     </div>
 
-                    <p className="text-slate-500 text-sm font-medium">
+                    <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
                       No leaves found
                     </p>
                   </td>
                 </tr>
               ) : (
-                leaves.map((leave) => (
+                currentLeaves.map((leave) => (
                   <tr
                     key={leave.id}
-                    className="hover:bg-slate-50/50 transition"
+                    className="hover:bg-slate-50/50 dark:hover:bg-slate-800/40 transition"
                   >
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-900 dark:text-slate-100">
                       {leave.staff?.name || "Unknown"}
                     </td>
 
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                      {new Date(leave.startDate).toLocaleDateString()}
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">
+                      {new Date(
+                        leave.startDate
+                      ).toLocaleDateString()}
                     </td>
 
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                      {new Date(leave.endDate).toLocaleDateString()}
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">
+                      {new Date(
+                        leave.endDate
+                      ).toLocaleDateString()}
                     </td>
 
-                    <td className="px-6 py-4 text-sm text-slate-500 max-w-xs truncate">
+                    <td className="px-6 py-4 text-sm text-slate-500 dark:text-slate-400 max-w-xs truncate">
                       {leave.reason || "-"}
                     </td>
 
@@ -409,11 +503,16 @@ export default function AdminLeaves() {
                       {leave.status === "PENDING" ? (
                         <div className="flex items-center gap-2">
                           <button
-                            disabled={actionLoading === leave.id}
-                            onClick={() =>
-                              updateLeave(leave.id, "APPROVED")
+                            disabled={
+                              actionLoading === leave.id
                             }
-                            className="bg-emerald-50 border border-emerald-200 text-emerald-700 px-3 py-1.5 rounded-xl text-xs font-semibold hover:bg-emerald-100 transition disabled:opacity-50 cursor-pointer"
+                            onClick={() =>
+                              updateLeave(
+                                leave.id,
+                                "APPROVED"
+                              )
+                            }
+                            className="bg-emerald-50 dark:bg-emerald-500/15 border border-emerald-200 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300 px-3 py-1.5 rounded-xl text-xs font-semibold hover:bg-emerald-100 dark:hover:bg-emerald-500/25 transition disabled:opacity-50 cursor-pointer"
                           >
                             {actionLoading === leave.id
                               ? "..."
@@ -421,11 +520,16 @@ export default function AdminLeaves() {
                           </button>
 
                           <button
-                            disabled={actionLoading === leave.id}
-                            onClick={() =>
-                              updateLeave(leave.id, "REJECTED")
+                            disabled={
+                              actionLoading === leave.id
                             }
-                            className="bg-rose-50 border border-rose-200 text-rose-700 px-3 py-1.5 rounded-xl text-xs font-semibold hover:bg-rose-100 transition disabled:opacity-50 cursor-pointer"
+                            onClick={() =>
+                              updateLeave(
+                                leave.id,
+                                "REJECTED"
+                              )
+                            }
+                            className="bg-rose-50 dark:bg-rose-500/15 border border-rose-200 dark:border-rose-500/30 text-rose-700 dark:text-rose-300 px-3 py-1.5 rounded-xl text-xs font-semibold hover:bg-rose-100 dark:hover:bg-rose-500/25 transition disabled:opacity-50 cursor-pointer"
                           >
                             {actionLoading === leave.id
                               ? "..."
@@ -433,7 +537,7 @@ export default function AdminLeaves() {
                           </button>
                         </div>
                       ) : (
-                        <span className="text-slate-400 text-xs italic">
+                        <span className="text-slate-400 dark:text-slate-500 text-xs italic">
                           No actions available
                         </span>
                       )}
@@ -450,25 +554,25 @@ export default function AdminLeaves() {
 
           {loading ? (
             <div className="py-12 flex flex-col items-center gap-2">
-              <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-6 h-6 border-2 border-blue-600 dark:border-blue-500 border-t-transparent rounded-full animate-spin"></div>
 
-              <p className="text-slate-500 text-sm font-medium">
+              <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
                 Loading leave requests...
               </p>
             </div>
           ) : leaves.length === 0 ? (
             <div className="py-12 px-4 text-center">
-              <div className="w-12 h-12 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">
+              <div className="w-12 h-12 bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">
                 📅
               </div>
 
-              <p className="text-slate-500 text-sm font-medium">
+              <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
                 No leaves found
               </p>
             </div>
           ) : (
-            <div className="divide-y divide-slate-100">
-              {leaves.map((leave) => (
+            <div className="divide-y divide-slate-100 dark:divide-slate-800">
+              {currentLeaves.map((leave) => (
                 <div
                   key={leave.id}
                   className="p-4 sm:p-5"
@@ -477,18 +581,18 @@ export default function AdminLeaves() {
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
 
-                      <div className="w-10 h-10 shrink-0 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 font-bold text-sm">
+                      <div className="w-10 h-10 shrink-0 rounded-xl bg-blue-50 dark:bg-blue-500/15 border border-blue-100 dark:border-blue-500/30 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-sm">
                         {(leave.staff?.name || "U")
                           .charAt(0)
                           .toUpperCase()}
                       </div>
 
                       <div className="min-w-0">
-                        <p className="text-sm font-semibold text-slate-900 truncate">
+                        <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">
                           {leave.staff?.name || "Unknown"}
                         </p>
 
-                        <p className="text-xs text-slate-500 mt-0.5">
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                           Leave Request
                         </p>
                       </div>
@@ -505,24 +609,24 @@ export default function AdminLeaves() {
 
                   {/* DATES */}
                   <div className="mt-4 grid grid-cols-2 gap-3">
-                    <div className="bg-slate-50/70 rounded-xl px-3 py-2.5">
-                      <p className="text-[10px] uppercase tracking-wider font-semibold text-slate-400">
+                    <div className="bg-slate-50/70 dark:bg-slate-800/60 rounded-xl px-3 py-2.5">
+                      <p className="text-[10px] uppercase tracking-wider font-semibold text-slate-400 dark:text-slate-500">
                         Start Date
                       </p>
 
-                      <p className="text-sm font-medium text-slate-700 mt-0.5">
+                      <p className="text-sm font-medium text-slate-700 dark:text-slate-200 mt-0.5">
                         {new Date(
                           leave.startDate
                         ).toLocaleDateString()}
                       </p>
                     </div>
 
-                    <div className="bg-slate-50/70 rounded-xl px-3 py-2.5">
-                      <p className="text-[10px] uppercase tracking-wider font-semibold text-slate-400">
+                    <div className="bg-slate-50/70 dark:bg-slate-800/60 rounded-xl px-3 py-2.5">
+                      <p className="text-[10px] uppercase tracking-wider font-semibold text-slate-400 dark:text-slate-500">
                         End Date
                       </p>
 
-                      <p className="text-sm font-medium text-slate-700 mt-0.5">
+                      <p className="text-sm font-medium text-slate-700 dark:text-slate-200 mt-0.5">
                         {new Date(
                           leave.endDate
                         ).toLocaleDateString()}
@@ -531,12 +635,12 @@ export default function AdminLeaves() {
                   </div>
 
                   {/* REASON */}
-                  <div className="mt-3 bg-slate-50/70 rounded-xl px-3 py-2.5">
-                    <p className="text-[10px] uppercase tracking-wider font-semibold text-slate-400">
+                  <div className="mt-3 bg-slate-50/70 dark:bg-slate-800/60 rounded-xl px-3 py-2.5">
+                    <p className="text-[10px] uppercase tracking-wider font-semibold text-slate-400 dark:text-slate-500">
                       Reason
                     </p>
 
-                    <p className="text-sm font-medium text-slate-700 mt-0.5 break-words">
+                    <p className="text-sm font-medium text-slate-700 dark:text-slate-200 mt-0.5 break-words">
                       {leave.reason || "-"}
                     </p>
                   </div>
@@ -545,11 +649,16 @@ export default function AdminLeaves() {
                   {leave.status === "PENDING" ? (
                     <div className="mt-4 grid grid-cols-2 gap-2">
                       <button
-                        disabled={actionLoading === leave.id}
-                        onClick={() =>
-                          updateLeave(leave.id, "APPROVED")
+                        disabled={
+                          actionLoading === leave.id
                         }
-                        className="w-full bg-emerald-50 border border-emerald-200 text-emerald-700 px-3 py-2.5 rounded-xl text-xs font-semibold hover:bg-emerald-100 transition disabled:opacity-50 cursor-pointer"
+                        onClick={() =>
+                          updateLeave(
+                            leave.id,
+                            "APPROVED"
+                          )
+                        }
+                        className="w-full bg-emerald-50 dark:bg-emerald-500/15 border border-emerald-200 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300 px-3 py-2.5 rounded-xl text-xs font-semibold hover:bg-emerald-100 dark:hover:bg-emerald-500/25 transition disabled:opacity-50 cursor-pointer"
                       >
                         {actionLoading === leave.id
                           ? "..."
@@ -557,11 +666,16 @@ export default function AdminLeaves() {
                       </button>
 
                       <button
-                        disabled={actionLoading === leave.id}
-                        onClick={() =>
-                          updateLeave(leave.id, "REJECTED")
+                        disabled={
+                          actionLoading === leave.id
                         }
-                        className="w-full bg-rose-50 border border-rose-200 text-rose-700 px-3 py-2.5 rounded-xl text-xs font-semibold hover:bg-rose-100 transition disabled:opacity-50 cursor-pointer"
+                        onClick={() =>
+                          updateLeave(
+                            leave.id,
+                            "REJECTED"
+                          )
+                        }
+                        className="w-full bg-rose-50 dark:bg-rose-500/15 border border-rose-200 dark:border-rose-500/30 text-rose-700 dark:text-rose-300 px-3 py-2.5 rounded-xl text-xs font-semibold hover:bg-rose-100 dark:hover:bg-rose-500/25 transition disabled:opacity-50 cursor-pointer"
                       >
                         {actionLoading === leave.id
                           ? "..."
@@ -570,7 +684,7 @@ export default function AdminLeaves() {
                     </div>
                   ) : (
                     <div className="mt-4">
-                      <span className="text-slate-400 text-xs italic">
+                      <span className="text-slate-400 dark:text-slate-500 text-xs italic">
                         No actions available
                       </span>
                     </div>
@@ -580,6 +694,117 @@ export default function AdminLeaves() {
             </div>
           )}
         </div>
+
+        {/* PAGINATION */}
+        {!loading && totalPages > 1 && (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 sm:px-6 py-4 border-t border-slate-100 dark:border-slate-800">
+
+            <p
+              className={`text-xs font-medium ${
+                darkMode
+                  ? "text-slate-400"
+                  : "text-slate-500"
+              }`}
+            >
+              Page{" "}
+              <span
+                className={`font-bold ${
+                  darkMode
+                    ? "text-slate-100"
+                    : "text-slate-900"
+                }`}
+              >
+                {currentPage}
+              </span>{" "}
+              of{" "}
+              <span
+                className={`font-bold ${
+                  darkMode
+                    ? "text-slate-100"
+                    : "text-slate-900"
+                }`}
+              >
+                {totalPages}
+              </span>
+            </p>
+
+            <div className="flex items-center gap-1.5">
+
+              {/* PREVIOUS */}
+              <button
+                type="button"
+                disabled={currentPage === 1}
+                onClick={() =>
+                  setCurrentPage((prev) =>
+                    Math.max(prev - 1, 1)
+                  )
+                }
+                className={`px-3 py-2 rounded-xl border text-xs font-semibold transition ${
+                  currentPage === 1
+                    ? darkMode
+                      ? "bg-slate-900 border-slate-800 text-slate-600 cursor-not-allowed"
+                      : "bg-slate-50 border-slate-100 text-slate-300 cursor-not-allowed"
+                    : darkMode
+                    ? "bg-slate-900 border-slate-700 text-slate-300 hover:bg-slate-800"
+                    : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+                }`}
+              >
+                ← Previous
+              </button>
+
+              {/* PAGE NUMBERS */}
+              <div className="flex items-center gap-1">
+                {Array.from(
+                  { length: totalPages },
+                  (_, index) => index + 1
+                ).map((page) => (
+                  <button
+                    key={page}
+                    type="button"
+                    onClick={() =>
+                      setCurrentPage(page)
+                    }
+                    className={`min-w-9 h-9 px-2 rounded-xl text-xs font-bold transition ${
+                      currentPage === page
+                        ? "bg-blue-600 text-white shadow-sm"
+                        : darkMode
+                        ? "bg-slate-900 border border-slate-700 text-slate-300 hover:bg-slate-800"
+                        : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+              </div>
+
+              {/* NEXT */}
+              <button
+                type="button"
+                disabled={currentPage === totalPages}
+                onClick={() =>
+                  setCurrentPage((prev) =>
+                    Math.min(
+                      prev + 1,
+                      totalPages
+                    )
+                  )
+                }
+                className={`px-3 py-2 rounded-xl border text-xs font-semibold transition ${
+                  currentPage === totalPages
+                    ? darkMode
+                      ? "bg-slate-900 border-slate-800 text-slate-600 cursor-not-allowed"
+                      : "bg-slate-50 border-slate-100 text-slate-300 cursor-not-allowed"
+                    : darkMode
+                    ? "bg-slate-900 border-slate-700 text-slate-300 hover:bg-slate-800"
+                    : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+                }`}
+              >
+                Next →
+              </button>
+
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

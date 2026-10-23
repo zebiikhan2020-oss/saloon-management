@@ -307,7 +307,7 @@ export default function AppointmentDetailsPage() {
                 </div>
 
                 <p className="mt-1.5 text-sm font-bold text-slate-800 dark:text-slate-200">
-                  Rs. {appointment.service?.price || 0}
+                 Rs. {appointment.priceAtBooking ?? appointment.service?.price ?? 0}
                 </p>
               </div>
 
@@ -409,6 +409,24 @@ export default function AppointmentDetailsPage() {
 
           </div>
         </div>
+
+        {/* VIEW INVOICE */}
+
+{appointment.status === "COMPLETED" && (
+  <div className="mb-3">
+    <button
+      type="button"
+      onClick={() =>
+        router.push(
+          `/customer/appointment/${appointment.id}/invoice`
+        )
+      }
+      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-all hover:bg-blue-700 active:scale-[0.99]"
+    >
+      🧾 View Invoice
+    </button>
+  </div>
+)}
 
         {/* BACK BUTTON */}
 

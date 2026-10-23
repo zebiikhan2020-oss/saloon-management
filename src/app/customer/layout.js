@@ -103,13 +103,13 @@ export default function CustomerLayout({ children }) {
         }
       }
 
-      if (notification.appointmentId) {
-        setShowNotifications(false);
+     if (notification.appointmentId) {
+  setShowNotifications(false);
 
-        router.push(
-          `/customer/appointment/${notification.appointmentId}`
-        );
-      }
+  router.push(
+    `/customer/appointment?appointmentId=${notification.appointmentId}`
+  );
+}
     } catch (error) {
       console.log(
         "NOTIFICATION CLICK ERROR:",

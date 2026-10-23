@@ -8,10 +8,12 @@ import {
   useState,
   useLayoutEffect,
 } from "react";
+import { useTheme } from "../(public)/components/ThemeProvider";
 
 export default function AdminLayout({ children }) {
   const router = useRouter();
   const pathname = usePathname();
+  const { theme, toggleTheme } = useTheme();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] =
@@ -627,8 +629,8 @@ export default function AdminLayout({ children }) {
             : "justify-start gap-3",
 
           active
-            ? "bg-indigo-600 text-white shadow-md shadow-indigo-200"
-            : "text-slate-500 hover:bg-indigo-50 hover:text-indigo-600",
+            ? "bg-indigo-600 text-white shadow-md shadow-indigo-200 dark:shadow-indigo-950/40"
+            : "text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-indigo-400",
         ].join(" ")}
       >
         {/* ICON */}
@@ -675,7 +677,7 @@ export default function AdminLayout({ children }) {
   // =====================================================
 
   return (
-    <div className="min-h-screen bg-slate-100 text-slate-900 overflow-x-hidden font-sans">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 overflow-x-hidden font-sans transition-colors duration-300">
 
       {/* =================================================
           SIDEBAR
@@ -685,11 +687,11 @@ export default function AdminLayout({ children }) {
         className={[
           "fixed top-0 left-0 right-auto z-50 h-screen",
           "w-64",
-          "bg-white border-r border-slate-100",
+          "bg-white dark:bg-slate-900 border-r border-slate-100 dark:border-slate-800",
           "flex flex-col",
           "transform transition-all duration-300",
           "lg:translate-x-0",
-          "shadow-[4px_0_20px_rgba(15,23,42,0.04)]",
+          "shadow-[4px_0_20px_rgba(15,23,42,0.04)] dark:shadow-black/20",
 
           sidebarCollapsed
             ? "lg:w-20"
@@ -711,7 +713,7 @@ export default function AdminLayout({ children }) {
 
           <div
             className={[
-              "p-5 border-b border-slate-100",
+              "p-5 border-b border-slate-100 dark:border-slate-800",
               "flex items-center",
 
               sidebarCollapsed
@@ -732,7 +734,7 @@ export default function AdminLayout({ children }) {
               ].join(" ")}
             >
 
-              <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white font-bold flex items-center justify-center text-base shadow-md shadow-indigo-100 shrink-0">
+              <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white font-bold flex items-center justify-center text-base shadow-md shadow-indigo-100 dark:shadow-indigo-950/40 shrink-0">
                 S
               </div>
 
@@ -740,11 +742,11 @@ export default function AdminLayout({ children }) {
 
               {!sidebarCollapsed && (
                 <div className="hidden lg:block">
-                  <h1 className="text-base font-bold text-slate-800 tracking-wide">
+                  <h1 className="text-base font-bold text-slate-800 dark:text-slate-100 tracking-wide">
                     Salon
                   </h1>
 
-                  <p className="text-slate-400 text-xs">
+                  <p className="text-slate-400 dark:text-slate-500 text-xs">
                     Management
                   </p>
                 </div>
@@ -753,11 +755,11 @@ export default function AdminLayout({ children }) {
               {/* MOBILE */}
 
               <div className="lg:hidden">
-                <h1 className="text-base font-bold text-slate-800 tracking-wide">
+                <h1 className="text-base font-bold text-slate-800 dark:text-slate-100 tracking-wide">
                   Salon
                 </h1>
 
-                <p className="text-slate-400 text-xs">
+                <p className="text-slate-400 dark:text-slate-500 text-xs">
                   Management
                 </p>
               </div>
@@ -774,11 +776,11 @@ export default function AdminLayout({ children }) {
                 lg:hidden
                 w-9 h-9
                 rounded-lg
-                bg-slate-50
-                border border-slate-200
-                text-slate-500
-                hover:text-slate-800
-                hover:bg-slate-100
+                bg-slate-50 dark:bg-slate-800
+                border border-slate-200 dark:border-slate-700
+                text-slate-500 dark:text-slate-400
+                hover:text-slate-800 dark:hover:text-slate-200
+                hover:bg-slate-100 dark:hover:bg-slate-700
                 transition
                 flex items-center justify-center
                 cursor-pointer
@@ -814,11 +816,11 @@ export default function AdminLayout({ children }) {
                 hidden lg:flex
                 w-9 h-9
                 rounded-lg
-                bg-slate-50
-                border border-slate-200
-                text-slate-500
-                hover:text-indigo-600
-                hover:bg-indigo-50
+                bg-slate-50 dark:bg-slate-800
+                border border-slate-200 dark:border-slate-700
+                text-slate-500 dark:text-slate-400
+                hover:text-indigo-600 dark:hover:text-indigo-400
+                hover:bg-indigo-50 dark:hover:bg-slate-700
                 items-center justify-center
                 transition
                 cursor-pointer
@@ -878,8 +880,10 @@ export default function AdminLayout({ children }) {
             [&::-webkit-scrollbar]:w-1.5
             [&::-webkit-scrollbar-track]:bg-transparent
             [&::-webkit-scrollbar-thumb]:bg-slate-200
+            dark:[&::-webkit-scrollbar-thumb]:bg-slate-700
             [&::-webkit-scrollbar-thumb]:rounded-full
             hover:[&::-webkit-scrollbar-thumb]:bg-slate-300
+            dark:hover:[&::-webkit-scrollbar-thumb]:bg-slate-600
           "
           style={{
             scrollbarWidth: "thin",
@@ -897,7 +901,7 @@ export default function AdminLayout({ children }) {
               "font-bold",
               "uppercase",
               "tracking-wider",
-              "text-slate-400",
+              "text-slate-400 dark:text-slate-500",
 
               sidebarCollapsed
                 ? "lg:hidden"
@@ -924,7 +928,7 @@ export default function AdminLayout({ children }) {
               "font-bold",
               "uppercase",
               "tracking-wider",
-              "text-slate-400",
+              "text-slate-400 dark:text-slate-500",
 
               sidebarCollapsed
                 ? "lg:hidden"
@@ -954,7 +958,7 @@ export default function AdminLayout({ children }) {
               "font-bold",
               "uppercase",
               "tracking-wider",
-              "text-slate-400",
+              "text-slate-400 dark:text-slate-500",
 
               sidebarCollapsed
                 ? "lg:hidden"
@@ -984,7 +988,7 @@ export default function AdminLayout({ children }) {
               "font-bold",
               "uppercase",
               "tracking-wider",
-              "text-slate-400",
+              "text-slate-400 dark:text-slate-500",
 
               sidebarCollapsed
                 ? "lg:hidden"
@@ -1014,7 +1018,7 @@ export default function AdminLayout({ children }) {
               "font-bold",
               "uppercase",
               "tracking-wider",
-              "text-slate-400",
+              "text-slate-400 dark:text-slate-500",
 
               sidebarCollapsed
                 ? "lg:hidden"
@@ -1078,8 +1082,8 @@ export default function AdminLayout({ children }) {
           shrink-0
           p-3
           border-t
-          border-slate-100
-          bg-white
+          border-slate-100 dark:border-slate-800
+          bg-white dark:bg-slate-900
         ">
 
           <button
@@ -1093,12 +1097,12 @@ export default function AdminLayout({ children }) {
                 ? "lg:justify-center justify-center"
                 : "justify-center gap-2",
 
-              "bg-slate-50",
-              "text-blue-500",
-              "border border-slate-200",
-              "hover:bg-blue-50",
-              "hover:border-blue-100",
-              "hover:text-blue-600",
+              "bg-slate-50 dark:bg-slate-800",
+              "text-blue-500 dark:text-blue-400",
+              "border border-slate-200 dark:border-slate-700",
+              "hover:bg-blue-50 dark:hover:bg-slate-700",
+              "hover:border-blue-100 dark:hover:border-slate-600",
+              "hover:text-blue-600 dark:hover:text-blue-300",
               "px-4 py-2.5",
               "rounded-xl",
               "transition-all duration-200",
@@ -1179,7 +1183,7 @@ export default function AdminLayout({ children }) {
           className="
             fixed
             inset-0
-            bg-slate-900/30
+            bg-slate-900/30 dark:bg-black/60
             backdrop-blur-[2px]
             z-40
             lg:hidden
@@ -1209,8 +1213,8 @@ export default function AdminLayout({ children }) {
         <header
           className="
             h-16
-            bg-white
-            border-b border-slate-100
+            bg-white dark:bg-slate-900
+            border-b border-slate-100 dark:border-slate-800
             px-3
             sm:px-5
             lg:px-6
@@ -1218,7 +1222,7 @@ export default function AdminLayout({ children }) {
             justify-between
             sticky top-0
             z-30
-            shadow-[0_2px_12px_rgba(15,23,42,0.04)]
+            shadow-[0_2px_12px_rgba(15,23,42,0.04)] dark:shadow-black/20
           "
         >
 
@@ -1244,11 +1248,11 @@ export default function AdminLayout({ children }) {
                 lg:hidden
                 p-2
                 rounded-lg
-                bg-slate-50
-                border border-slate-100
-                text-slate-600
-                hover:bg-indigo-50
-                hover:text-indigo-600
+                bg-slate-50 dark:bg-slate-800
+                border border-slate-100 dark:border-slate-700
+                text-slate-600 dark:text-slate-300
+                hover:bg-indigo-50 dark:hover:bg-slate-700
+                hover:text-indigo-600 dark:hover:text-indigo-400
                 transition
                 cursor-pointer
               "
@@ -1263,7 +1267,7 @@ export default function AdminLayout({ children }) {
                 font-bold
                 text-base
                 sm:text-lg
-                text-slate-800
+                text-slate-800 dark:text-slate-100
                 capitalize
                 truncate
               ">
@@ -1274,7 +1278,7 @@ export default function AdminLayout({ children }) {
                 hidden
                 sm:block
                 text-[11px]
-                text-slate-400
+                text-slate-400 dark:text-slate-500
                 mt-0.5
               ">
                 Admin Panel
@@ -1292,6 +1296,30 @@ export default function AdminLayout({ children }) {
             gap-2
             sm:gap-4
           ">
+
+            {/* =================================================
+                THEME BUTTON
+            ================================================= */}
+
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 hover:bg-indigo-50 dark:hover:bg-slate-700 hover:border-indigo-100 dark:hover:border-slate-600 text-slate-500 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition cursor-pointer"
+              aria-label={
+                theme === "dark"
+                  ? "Switch to light mode"
+                  : "Switch to dark mode"
+              }
+              title={
+                theme === "dark"
+                  ? "Light mode"
+                  : "Dark mode"
+              }
+            >
+              {theme === "dark"
+                ? "☀️"
+                : "🌙"}
+            </button>
 
             {/* =================================================
                 NOTIFICATIONS
@@ -1313,12 +1341,12 @@ export default function AdminLayout({ children }) {
                   relative
                   p-2.5
                   rounded-xl
-                  bg-slate-50
-                  border border-slate-100
-                  hover:bg-indigo-50
-                  hover:border-indigo-100
-                  text-slate-500
-                  hover:text-indigo-600
+                  bg-slate-50 dark:bg-slate-800
+                  border border-slate-100 dark:border-slate-700
+                  hover:bg-indigo-50 dark:hover:bg-slate-700
+                  hover:border-indigo-100 dark:hover:border-slate-600
+                  text-slate-500 dark:text-slate-300
+                  hover:text-indigo-600 dark:hover:text-indigo-400
                   transition
                   cursor-pointer
                 "
@@ -1364,10 +1392,10 @@ export default function AdminLayout({ children }) {
                   mt-3
                   w-[360px]
                   max-w-[calc(100vw-24px)]
-                  bg-white
+                  bg-white dark:bg-slate-900
                   rounded-2xl
-                  shadow-[0_15px_40px_rgba(15,23,42,0.12)]
-                  border border-slate-100
+                  shadow-[0_15px_40px_rgba(15,23,42,0.12)] dark:shadow-black/40
+                  border border-slate-100 dark:border-slate-800
                   z-[9999]
                   overflow-hidden
                 ">
@@ -1382,8 +1410,8 @@ export default function AdminLayout({ children }) {
                     px-5
                     py-4
                     border-b
-                    border-slate-100
-                    bg-slate-50/70
+                    border-slate-100 dark:border-slate-800
+                    bg-slate-50/70 dark:bg-slate-800/70
                   ">
 
                     <div className="min-w-0">
@@ -1391,7 +1419,7 @@ export default function AdminLayout({ children }) {
                       <h2 className="
                         font-bold
                         text-sm
-                        text-slate-800
+                        text-slate-800 dark:text-slate-100
                       ">
                         Notifications
                       </h2>
@@ -1399,7 +1427,7 @@ export default function AdminLayout({ children }) {
                       {unreadCount > 0 && (
                         <p className="
                           text-[11px]
-                          text-slate-500
+                          text-slate-500 dark:text-slate-400
                           mt-0.5
                         ">
                           {unreadCount} unread messages
@@ -1415,8 +1443,8 @@ export default function AdminLayout({ children }) {
                           shrink-0
                           text-xs
                           font-semibold
-                          text-indigo-600
-                          hover:text-indigo-700
+                          text-indigo-600 dark:text-indigo-400
+                          hover:text-indigo-700 dark:hover:text-indigo-300
                           cursor-pointer
                         "
                       >
@@ -1434,7 +1462,7 @@ export default function AdminLayout({ children }) {
                     max-h-[380px]
                     overflow-y-auto
                     divide-y
-                    divide-slate-100
+                    divide-slate-100 dark:divide-slate-800
                   ">
 
                     {notificationLoading &&
@@ -1449,7 +1477,7 @@ export default function AdminLayout({ children }) {
                           w-8
                           h-8
                           border-2
-                          border-slate-200
+                          border-slate-200 dark:border-slate-700
                           border-t-indigo-600
                           rounded-full
                           animate-spin
@@ -1458,7 +1486,7 @@ export default function AdminLayout({ children }) {
 
                         <p className="
                           text-xs
-                          text-slate-500
+                          text-slate-500 dark:text-slate-400
                           mt-3
                         ">
                           Loading notifications...
@@ -1478,8 +1506,8 @@ export default function AdminLayout({ children }) {
                           w-10
                           h-10
                           rounded-xl
-                          bg-indigo-50
-                          text-indigo-600
+                          bg-indigo-50 dark:bg-slate-800
+                          text-indigo-600 dark:text-indigo-400
                           flex
                           items-center
                           justify-center
@@ -1491,7 +1519,7 @@ export default function AdminLayout({ children }) {
                         </div>
 
                         <p className="
-                          text-slate-500
+                          text-slate-500 dark:text-slate-400
                           text-xs
                         ">
                           No notifications yet.
@@ -1517,15 +1545,15 @@ export default function AdminLayout({ children }) {
                             text-left
                             px-5
                             py-3.5
-                            hover:bg-indigo-50/50
+                            hover:bg-indigo-50/50 dark:hover:bg-slate-800
                             transition
                             flex
                             gap-3
                             cursor-pointer
                             ${
                               n.isRead
-                                ? "bg-white"
-                                : "bg-indigo-50/40"
+                                ? "bg-white dark:bg-slate-900"
+                                : "bg-indigo-50/40 dark:bg-indigo-950/30"
                             }
                           `}
                         >
@@ -1559,7 +1587,7 @@ export default function AdminLayout({ children }) {
                               <h3 className="
                                 font-semibold
                                 text-xs
-                                text-slate-800
+                                text-slate-800 dark:text-slate-100
                                 leading-5
                               ">
                                 {n.title}
@@ -1580,7 +1608,7 @@ export default function AdminLayout({ children }) {
 
                             <p className="
                               text-xs
-                              text-slate-600
+                              text-slate-600 dark:text-slate-300
                               mt-1
                               leading-relaxed
                               break-words
@@ -1590,7 +1618,7 @@ export default function AdminLayout({ children }) {
 
                             <p className="
                               text-[10px]
-                              text-slate-400
+                              text-slate-400 dark:text-slate-500
                               mt-1.5
                               font-medium
                             ">
@@ -1625,7 +1653,7 @@ export default function AdminLayout({ children }) {
               pl-2
               sm:pl-3
               border-l
-              border-slate-200
+              border-slate-200 dark:border-slate-700
             ">
 
               <div className="
@@ -1640,7 +1668,7 @@ export default function AdminLayout({ children }) {
                 text-xs
                 font-bold
                 shadow-sm
-                shadow-indigo-100
+                shadow-indigo-100 dark:shadow-indigo-950/40
               ">
                 AU
               </div>
@@ -1651,7 +1679,7 @@ export default function AdminLayout({ children }) {
                   block
                   text-xs
                   font-semibold
-                  text-slate-700
+                  text-slate-700 dark:text-slate-300
                 ">
                   Admin
                 </span>
@@ -1659,7 +1687,7 @@ export default function AdminLayout({ children }) {
                 <span className="
                   block
                   text-[10px]
-                  text-slate-400
+                  text-slate-400 dark:text-slate-500
                 ">
                   Administrator
                 </span>

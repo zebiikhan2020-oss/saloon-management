@@ -9,6 +9,33 @@ export default function AdminCalendarPage() {
   const [selectedAppointment, setSelectedAppointment] = useState(null);
 
   // =====================================================
+  // DARK MODE
+  // =====================================================
+
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    const updateTheme = () => {
+      setDarkMode(
+        document.documentElement.classList.contains("dark")
+      );
+    };
+
+    updateTheme();
+
+    const observer = new MutationObserver(() => {
+      updateTheme();
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  // =====================================================
   // FETCH APPOINTMENTS
   // =====================================================
 
@@ -183,22 +210,22 @@ export default function AdminCalendarPage() {
   function getStatusStyle(status) {
     switch (status) {
       case "CONFIRMED":
-        return "bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-emerald-100/60";
+        return "bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-100 dark:border-emerald-500/30 hover:bg-emerald-100/60 dark:hover:bg-emerald-500/25";
 
       case "PENDING":
-        return "bg-amber-50 text-amber-700 border-amber-100 hover:bg-amber-100/60";
+        return "bg-amber-50 dark:bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-100 dark:border-amber-500/30 hover:bg-amber-100/60 dark:hover:bg-amber-500/25";
 
       case "REJECTED":
-        return "bg-rose-50 text-rose-700 border-rose-100 hover:bg-rose-100/60";
+        return "bg-rose-50 dark:bg-rose-500/15 text-rose-700 dark:text-rose-300 border-rose-100 dark:border-rose-500/30 hover:bg-rose-100/60 dark:hover:bg-rose-500/25";
 
       case "COMPLETED":
-        return "bg-blue-50 text-blue-700 border-blue-100 hover:bg-blue-100/60";
+        return "bg-blue-50 dark:bg-blue-500/15 text-blue-700 dark:text-blue-300 border-blue-100 dark:border-blue-500/30 hover:bg-blue-100/60 dark:hover:bg-blue-500/25";
 
       case "CANCELLED":
-        return "bg-slate-100 text-slate-700 border-slate-200/60 hover:bg-slate-200/60";
+        return "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200/60 dark:border-slate-700 hover:bg-slate-200/60 dark:hover:bg-slate-700";
 
       default:
-        return "bg-slate-100 text-slate-700 border-slate-200/60 hover:bg-slate-200/60";
+        return "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200/60 dark:border-slate-700 hover:bg-slate-200/60 dark:hover:bg-slate-700";
     }
   }
 
@@ -252,24 +279,24 @@ export default function AdminCalendarPage() {
   // =====================================================
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 lg:py-8 space-y-6 sm:space-y-8">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 lg:py-8 space-y-6 sm:space-y-8 bg-slate-50 dark:bg-slate-950 min-h-full">
 
       {/* =================================================
           HEADER
       ================================================= */}
 
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-5">
 
         <div>
-          <span className="inline-flex text-[11px] font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+          <span className="inline-flex text-[11px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/15 px-3 py-1 rounded-full">
             Schedule View
           </span>
 
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mt-2">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 mt-2">
             Appointment Calendar
           </h1>
 
-          <p className="text-slate-500 text-sm mt-1">
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
             View and manage salon appointments by date.
           </p>
         </div>
@@ -289,24 +316,24 @@ export default function AdminCalendarPage() {
           CALENDAR CARD
       ================================================= */}
 
-      <div className="bg-white rounded-2xl shadow-xs border border-slate-100 overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-100 dark:border-slate-800 overflow-hidden">
 
         {/* =================================================
             CALENDAR HEADER
         ================================================= */}
 
-        <div className="p-5 sm:p-6 lg:p-8 border-b border-slate-100">
+        <div className="p-5 sm:p-6 lg:p-8 border-b border-slate-100 dark:border-slate-800">
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 
             {/* MONTH */}
 
             <div>
-              <h2 className="text-xl font-bold text-slate-900">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">
                 {monthName} {year}
               </h2>
 
-              <p className="text-sm text-slate-500 mt-0.5">
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
                 {monthAppointments.length} appointment
                 {monthAppointments.length !== 1
                   ? "s"
@@ -322,7 +349,7 @@ export default function AdminCalendarPage() {
 
               <button
                 onClick={goToToday}
-                className="flex-1 sm:flex-none px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50 transition cursor-pointer"
+                className="flex-1 sm:flex-none px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer"
               >
                 Today
               </button>
@@ -330,7 +357,7 @@ export default function AdminCalendarPage() {
               <button
                 onClick={previousMonth}
                 aria-label="Previous month"
-                className="w-10 h-10 shrink-0 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition text-slate-700 flex items-center justify-center text-lg cursor-pointer"
+                className="w-10 h-10 shrink-0 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition text-slate-700 dark:text-slate-300 flex items-center justify-center text-lg cursor-pointer"
               >
                 ←
               </button>
@@ -338,7 +365,7 @@ export default function AdminCalendarPage() {
               <button
                 onClick={nextMonth}
                 aria-label="Next month"
-                className="w-10 h-10 shrink-0 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition text-slate-700 flex items-center justify-center text-lg cursor-pointer"
+                className="w-10 h-10 shrink-0 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition text-slate-700 dark:text-slate-300 flex items-center justify-center text-lg cursor-pointer"
               >
                 →
               </button>
@@ -354,9 +381,9 @@ export default function AdminCalendarPage() {
             LEGEND
         ================================================= */}
 
-        <div className="px-5 sm:px-6 py-3.5 border-b border-slate-100 bg-slate-50/50">
+        <div className="px-5 sm:px-6 py-3.5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40">
 
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-semibold text-slate-600">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-semibold text-slate-600 dark:text-slate-300">
 
             <div className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
@@ -394,10 +421,10 @@ export default function AdminCalendarPage() {
 
         {loading ? (
 
-          <div className="bg-white p-12 sm:p-16 text-center">
-            <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+          <div className="bg-white dark:bg-slate-900 p-12 sm:p-16 text-center">
+            <div className="w-8 h-8 border-2 border-blue-600 dark:border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
 
-            <p className="text-slate-500 text-sm font-medium">
+            <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
               Loading appointments...
             </p>
           </div>
@@ -414,7 +441,7 @@ export default function AdminCalendarPage() {
 
               {/* WEEK DAYS */}
 
-              <div className="grid grid-cols-7 bg-slate-50/70 border-b border-slate-100">
+              <div className="grid grid-cols-7 bg-slate-50/70 dark:bg-slate-800/60 border-b border-slate-100 dark:border-slate-800">
 
                 {[
                   "Sunday",
@@ -428,7 +455,7 @@ export default function AdminCalendarPage() {
 
                   <div
                     key={day}
-                    className="px-1 sm:px-3 py-3 text-center text-[9px] sm:text-xs font-bold uppercase tracking-wider text-slate-600 border-r border-slate-100 last:border-r-0 truncate"
+                    className="px-1 sm:px-3 py-3 text-center text-[9px] sm:text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 border-r border-slate-100 dark:border-slate-800 last:border-r-0 truncate"
                   >
                     <span className="hidden sm:inline">
                       {day}
@@ -455,7 +482,7 @@ export default function AdminCalendarPage() {
                       return (
                         <div
                           key={`empty-${index}`}
-                          className="min-h-[130px] sm:min-h-[150px] bg-slate-50/35 border-r border-b border-slate-100"
+                          className="min-h-[130px] sm:min-h-[150px] bg-slate-50/35 dark:bg-slate-800/30 border-r border-b border-slate-100 dark:border-slate-800"
                         />
                       );
                     }
@@ -469,10 +496,10 @@ export default function AdminCalendarPage() {
 
                       <div
                         key={formatDate(date)}
-                        className={`min-h-[130px] sm:min-h-[150px] border-r border-b border-slate-100 p-1.5 sm:p-2 ${
+                        className={`min-h-[130px] sm:min-h-[150px] border-r border-b border-slate-100 dark:border-slate-800 p-1.5 sm:p-2 ${
                           isToday(date)
-                            ? "bg-blue-50/30"
-                            : "bg-white"
+                            ? "bg-blue-50/30 dark:bg-blue-500/10"
+                            : "bg-white dark:bg-slate-900"
                         }`}
                       >
 
@@ -484,14 +511,14 @@ export default function AdminCalendarPage() {
                             className={`inline-flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-full text-[10px] sm:text-xs font-bold ${
                               isToday(date)
                                 ? "bg-blue-600 text-white"
-                                : "text-slate-700"
+                                : "text-slate-700 dark:text-slate-300"
                             }`}
                           >
                             {date.getDate()}
                           </span>
 
                           {dayAppointments.length > 0 && (
-                            <span className="text-[9px] sm:text-[11px] text-slate-600 font-bold bg-slate-100 px-1.5 sm:px-2 py-0.5 rounded-full">
+                            <span className="text-[9px] sm:text-[11px] text-slate-600 dark:text-slate-300 font-bold bg-slate-100 dark:bg-slate-800 px-1.5 sm:px-2 py-0.5 rounded-full">
                               {dayAppointments.length}
                             </span>
                           )}
@@ -535,7 +562,7 @@ export default function AdminCalendarPage() {
 
                                 </div>
 
-                                <p className="text-[10px] sm:text-xs font-semibold truncate mt-1 text-slate-900">
+                                <p className="text-[10px] sm:text-xs font-semibold truncate mt-1 text-slate-900 dark:text-slate-100">
                                   {appointment
                                     .customer
                                     ?.name ||
@@ -580,14 +607,14 @@ export default function AdminCalendarPage() {
       {selectedAppointment && (
 
         <div
-          className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-fade-in"
+          className="fixed inset-0 z-50 bg-slate-900/40 dark:bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-fade-in"
           onClick={() =>
             setSelectedAppointment(null)
           }
         >
 
           <div
-            className="bg-white w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl shadow-xl border border-slate-100 overflow-hidden"
+            className="bg-white dark:bg-slate-900 w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 overflow-hidden"
             onClick={(e) =>
               e.stopPropagation()
             }
@@ -595,14 +622,14 @@ export default function AdminCalendarPage() {
 
             {/* MODAL HEADER */}
 
-            <div className="bg-white border-b border-slate-100 px-5 sm:px-6 py-4 sm:py-5 flex items-center justify-between gap-3">
+            <div className="bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 px-5 sm:px-6 py-4 sm:py-5 flex items-center justify-between gap-3">
 
               <div className="min-w-0">
-                <h2 className="text-base sm:text-lg font-bold text-slate-900">
+                <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100">
                   Appointment Details
                 </h2>
 
-                <p className="text-slate-500 text-xs mt-0.5">
+                <p className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">
                   Complete appointment information
                 </p>
               </div>
@@ -611,7 +638,7 @@ export default function AdminCalendarPage() {
                 onClick={() =>
                   setSelectedAppointment(null)
                 }
-                className="w-8 h-8 shrink-0 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-100 transition cursor-pointer"
+                className="w-8 h-8 shrink-0 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition cursor-pointer"
               >
                 ✕
               </button>
@@ -626,7 +653,7 @@ export default function AdminCalendarPage() {
               {/* STATUS */}
 
               <div>
-                <p className="text-[11px] uppercase font-bold tracking-wider text-slate-600">
+                <p className="text-[11px] uppercase font-bold tracking-wider text-slate-600 dark:text-slate-300">
                   Status
                 </p>
 
@@ -644,18 +671,18 @@ export default function AdminCalendarPage() {
 
               {/* CUSTOMER */}
 
-              <div className="border-t border-slate-100 pt-4">
-                <p className="text-[11px] uppercase font-bold tracking-wider text-slate-600 mb-1">
+              <div className="border-t border-slate-100 dark:border-slate-800 pt-4">
+                <p className="text-[11px] uppercase font-bold tracking-wider text-slate-600 dark:text-slate-300 mb-1">
                   Customer
                 </p>
 
-                <p className="font-bold text-slate-900 text-sm break-words">
+                <p className="font-bold text-slate-900 dark:text-slate-100 text-sm break-words">
                   {selectedAppointment
                     .customer?.name ||
                     "Unknown"}
                 </p>
 
-                <p className="text-xs text-slate-500 mt-0.5 break-all">
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 break-all">
                   {selectedAppointment
                     .customer?.email ||
                     "-"}
@@ -665,18 +692,18 @@ export default function AdminCalendarPage() {
 
               {/* SERVICE */}
 
-              <div className="border-t border-slate-100 pt-4">
-                <p className="text-[11px] uppercase font-bold tracking-wider text-slate-600 mb-1">
+              <div className="border-t border-slate-100 dark:border-slate-800 pt-4">
+                <p className="text-[11px] uppercase font-bold tracking-wider text-slate-600 dark:text-slate-300 mb-1">
                   Service
                 </p>
 
-                <p className="font-bold text-slate-900 text-sm break-words">
+                <p className="font-bold text-slate-900 dark:text-slate-100 text-sm break-words">
                   {selectedAppointment
                     .service?.name ||
                     "-"}
                 </p>
 
-                <p className="text-xs text-slate-500 mt-0.5 break-words">
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 break-words">
                   Category:{" "}
                   {selectedAppointment
                     .service
@@ -688,12 +715,12 @@ export default function AdminCalendarPage() {
 
               {/* STAFF */}
 
-              <div className="border-t border-slate-100 pt-4">
-                <p className="text-[11px] uppercase font-bold tracking-wider text-slate-600 mb-1">
+              <div className="border-t border-slate-100 dark:border-slate-800 pt-4">
+                <p className="text-[11px] uppercase font-bold tracking-wider text-slate-600 dark:text-slate-300 mb-1">
                   Staff
                 </p>
 
-                <p className="font-bold text-slate-900 text-sm break-words">
+                <p className="font-bold text-slate-900 dark:text-slate-100 text-sm break-words">
                   {selectedAppointment
                     .staff?.name ||
                     "Not Assigned"}
@@ -701,7 +728,7 @@ export default function AdminCalendarPage() {
 
                 {selectedAppointment
                   .staff?.email && (
-                  <p className="text-xs text-slate-500 mt-0.5 break-all">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 break-all">
                     {
                       selectedAppointment
                         .staff.email
@@ -713,14 +740,14 @@ export default function AdminCalendarPage() {
 
               {/* DATE + TIME */}
 
-              <div className="border-t border-slate-100 pt-4 grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 gap-4">
+              <div className="border-t border-slate-100 dark:border-slate-800 pt-4 grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 gap-4">
 
                 <div>
-                  <p className="text-[11px] uppercase font-bold tracking-wider text-slate-600 mb-1">
+                  <p className="text-[11px] uppercase font-bold tracking-wider text-slate-600 dark:text-slate-300 mb-1">
                     Date
                   </p>
 
-                  <p className="font-semibold text-slate-900 text-sm">
+                  <p className="font-semibold text-slate-900 dark:text-slate-100 text-sm">
                     {selectedAppointment.date
                       ? new Date(
                           selectedAppointment.date
@@ -740,11 +767,11 @@ export default function AdminCalendarPage() {
 
 
                 <div>
-                  <p className="text-[11px] uppercase font-bold tracking-wider text-slate-600 mb-1">
+                  <p className="text-[11px] uppercase font-bold tracking-wider text-slate-600 dark:text-slate-300 mb-1">
                     Time
                   </p>
 
-                  <p className="font-semibold text-slate-900 text-sm">
+                  <p className="font-semibold text-slate-900 dark:text-slate-100 text-sm">
                     {selectedAppointment.time ||
                       "-"}
                   </p>

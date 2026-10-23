@@ -521,7 +521,7 @@ export default function MyAppointmentsPage() {
                             <span className="text-sm">💰</span>
 
                             <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200">
-                              Rs. {appointment.service?.price || 0}
+                             Rs. {appointment.priceAtBooking ?? appointment.service?.price ?? 0}
                             </span>
                           </div>
                         </div>
@@ -586,6 +586,17 @@ export default function MyAppointmentsPage() {
                             Leave a Review ✨
                           </button>
                         )}
+                        {appointment.status === "CONFIRMED" && (
+  <button
+    type="button"
+    onClick={() => {
+      window.location.href = `/customer/appointment/${appointment.id}/invoice`;
+    }}
+    className="w-full rounded-xl bg-blue-600 px-5 py-3 text-xs font-bold text-white shadow-sm transition hover:bg-blue-700 sm:w-auto"
+  >
+    🧾 View Invoice
+  </button>
+)}
 
                       </div>
 

@@ -126,22 +126,23 @@ model Service {
 }
 
 model Appointment {
-  id            String             @id @default(cuid())
-  customerId    String
-  staffId       String?
-  serviceId     String
-  date          DateTime
-  time          String
-  status        AppointmentStatus  @default(PENDING)
-  createdAt     DateTime           @default(now())
-  updatedAt     DateTime           @updatedAt
-  endTime       String?
-  paymentMethod PaymentMethod      @default(PAY_AT_SALON)
-  paymentStatus PaymentStatus      @default(PENDING)
-  customer      User               @relation("CustomerAppointments", fields: [customerId], references: [id])
-  service       Service            @relation(fields: [serviceId], references: [id])
-  staff         User?              @relation("StaffAppointments", fields: [staffId], references: [id])
-  review        AppointmentReview?
+  id             String             @id @default(cuid())
+  customerId     String
+  staffId        String?
+  serviceId      String
+  date           DateTime
+  time           String
+  status         AppointmentStatus  @default(PENDING)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  endTime        String?
+  paymentMethod  PaymentMethod      @default(PAY_AT_SALON)
+  paymentStatus  PaymentStatus      @default(PENDING)
+  priceAtBooking Float?
+  customer       User               @relation("CustomerAppointments", fields: [customerId], references: [id])
+  service        Service            @relation(fields: [serviceId], references: [id])
+  staff          User?              @relation("StaffAppointments", fields: [staffId], references: [id])
+  review         AppointmentReview?
 }
 
 model BusinessHour {

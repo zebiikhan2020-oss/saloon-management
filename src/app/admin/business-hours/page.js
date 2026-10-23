@@ -27,6 +27,33 @@ export default function BusinessHoursPage() {
   const [deletingSpecialId, setDeletingSpecialId] = useState(null);
 
   // =====================================================
+  // DARK MODE
+  // =====================================================
+
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    const updateTheme = () => {
+      setDarkMode(
+        document.documentElement.classList.contains("dark")
+      );
+    };
+
+    updateTheme();
+
+    const observer = new MutationObserver(() => {
+      updateTheme();
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  // =====================================================
   // FETCH
   // =====================================================
 
@@ -198,9 +225,9 @@ export default function BusinessHoursPage() {
     return (
       <div className="flex items-center justify-center min-h-[400px] px-4">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-[3px] border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-8 h-8 border-[3px] border-blue-600 dark:border-blue-500 border-t-transparent rounded-full animate-spin"></div>
 
-          <p className="text-slate-500 text-sm font-medium text-center">
+          <p className="text-slate-500 dark:text-slate-400 text-sm font-medium text-center">
             Loading business hours...
           </p>
         </div>
@@ -216,24 +243,24 @@ export default function BusinessHoursPage() {
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 lg:py-8 space-y-6 sm:space-y-8">
 
       {/* HEADER */}
-      <div className="border-b border-slate-100 pb-5">
-        <span className="inline-flex items-center text-[11px] font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+      <div className="border-b border-slate-100 dark:border-slate-800 pb-5">
+        <span className="inline-flex items-center text-[11px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/15 border border-blue-100 dark:border-blue-500/30 px-3 py-1 rounded-full">
           Schedule
         </span>
 
-        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mt-2">
+        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 mt-2">
           Business Hours
         </h1>
 
-        <p className="text-slate-500 text-sm mt-1">
+        <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
           Manage salon opening, closing and special hours.
         </p>
       </div>
 
       {/* MESSAGES */}
       {message && (
-        <div className="flex items-start sm:items-center gap-3 rounded-xl border border-emerald-200/60 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 shadow-xs">
-          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold bg-emerald-100">
+        <div className="flex items-start sm:items-center gap-3 rounded-xl border border-emerald-200/60 dark:border-emerald-500/30 bg-emerald-50 dark:bg-emerald-500/10 px-4 py-3 text-sm text-emerald-700 dark:text-emerald-300 shadow-xs">
+          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
             ✓
           </span>
 
@@ -242,8 +269,8 @@ export default function BusinessHoursPage() {
       )}
 
       {error && (
-        <div className="flex items-start sm:items-center gap-3 rounded-xl border border-rose-200/60 bg-rose-50 px-4 py-3 text-sm text-rose-700 shadow-xs">
-          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold bg-rose-100">
+        <div className="flex items-start sm:items-center gap-3 rounded-xl border border-rose-200/60 dark:border-rose-500/30 bg-rose-50 dark:bg-rose-500/10 px-4 py-3 text-sm text-rose-700 dark:text-rose-300 shadow-xs">
+          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold bg-rose-100 dark:bg-rose-500/15 text-rose-600 dark:text-rose-400">
             ✕
           </span>
 
@@ -252,13 +279,13 @@ export default function BusinessHoursPage() {
       )}
 
       {/* WEEKLY HOURS */}
-      <section className="bg-white rounded-2xl shadow-xs border border-slate-100 p-4 sm:p-6 lg:p-8">
+      <section className="bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-100 dark:border-slate-800 p-4 sm:p-6 lg:p-8">
         <div className="mb-5 sm:mb-6">
-          <h2 className="text-lg sm:text-xl font-bold text-slate-900">
+          <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100">
             Weekly Business Hours
           </h2>
 
-          <p className="text-slate-500 text-sm mt-1">
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
             Set your regular opening and closing hours for each day.
           </p>
         </div>
@@ -270,13 +297,13 @@ export default function BusinessHoursPage() {
             return (
               <div
                 key={day}
-                className="border border-slate-100 bg-slate-50/40 rounded-xl p-4 sm:p-5 hover:bg-slate-50/80 transition"
+                className="border border-slate-100 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-800/60 rounded-xl p-4 sm:p-5 hover:bg-slate-50/80 dark:hover:bg-slate-800 transition"
               >
                 <div className="flex flex-col lg:flex-row lg:items-center gap-4">
 
                   {/* DAY */}
                   <div className="w-full lg:w-32 shrink-0">
-                    <h3 className="font-semibold text-slate-800 text-sm">
+                    <h3 className="font-semibold text-slate-800 dark:text-slate-100 text-sm">
                       {day}
                     </h3>
                   </div>
@@ -290,11 +317,28 @@ export default function BusinessHoursPage() {
                       onChange={(e) =>
                         updateDay(day, { type: e.target.value })
                       }
-                      className="border border-slate-200/80 bg-white rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition w-full sm:w-44"
+                      className="border border-slate-200/80 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl px-3 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition w-full sm:w-44"
                     >
-                      <option value="NORMAL">Normal</option>
-                      <option value="FULL_DAY">Full Day (24h)</option>
-                      <option value="CLOSED">Closed</option>
+                      <option
+                        value="NORMAL"
+                        className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
+                      >
+                        Normal
+                      </option>
+
+                      <option
+                        value="FULL_DAY"
+                        className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
+                      >
+                        Full Day (24h)
+                      </option>
+
+                      <option
+                        value="CLOSED"
+                        className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
+                      >
+                        Closed
+                      </option>
                     </select>
 
                     {/* NORMAL TIMES */}
@@ -308,10 +352,10 @@ export default function BusinessHoursPage() {
                               openTime: e.target.value,
                             })
                           }
-                          className="min-w-0 flex-1 sm:flex-none border border-slate-200/80 bg-white rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+                          className="min-w-0 flex-1 sm:flex-none border border-slate-200/80 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl px-3 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
                         />
 
-                        <span className="text-slate-400 text-sm px-1 shrink-0">
+                        <span className="text-slate-400 dark:text-slate-500 text-sm px-1 shrink-0">
                           to
                         </span>
 
@@ -323,21 +367,21 @@ export default function BusinessHoursPage() {
                               closeTime: e.target.value,
                             })
                           }
-                          className="min-w-0 flex-1 sm:flex-none border border-slate-200/80 bg-white rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+                          className="min-w-0 flex-1 sm:flex-none border border-slate-200/80 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl px-3 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
                         />
                       </div>
                     )}
 
                     {/* FULL DAY */}
                     {data.type === "FULL_DAY" && (
-                      <span className="inline-flex w-fit text-emerald-600 font-semibold text-xs bg-emerald-50 border border-emerald-100 px-3 py-1.5 rounded-lg">
+                      <span className="inline-flex w-fit text-emerald-600 dark:text-emerald-400 font-semibold text-xs bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/30 px-3 py-1.5 rounded-lg">
                         Open 24 Hours
                       </span>
                     )}
 
                     {/* CLOSED */}
                     {data.type === "CLOSED" && (
-                      <span className="inline-flex w-fit text-rose-600 font-semibold text-xs bg-rose-50 border border-rose-100 px-3 py-1.5 rounded-lg">
+                      <span className="inline-flex w-fit text-rose-600 dark:text-rose-400 font-semibold text-xs bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/30 px-3 py-1.5 rounded-lg">
                         Salon Closed
                       </span>
                     )}
@@ -350,13 +394,13 @@ export default function BusinessHoursPage() {
       </section>
 
       {/* SPECIAL HOURS */}
-      <section className="bg-white rounded-2xl shadow-xs border border-slate-100 p-4 sm:p-6 lg:p-8">
+      <section className="bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-100 dark:border-slate-800 p-4 sm:p-6 lg:p-8">
         <div className="mb-5 sm:mb-6">
-          <h2 className="text-lg sm:text-xl font-bold text-slate-900">
+          <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100">
             Special Business Hours
           </h2>
 
-          <p className="text-slate-500 text-sm mt-1">
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
             Use this for Eid, holidays or other special dates.
           </p>
         </div>
@@ -364,11 +408,11 @@ export default function BusinessHoursPage() {
         {/* ADD FORM */}
         <form
           onSubmit={addSpecialHour}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end bg-slate-50/50 border border-slate-100 p-4 sm:p-5 rounded-2xl"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end bg-slate-50/50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-4 sm:p-5 rounded-2xl"
         >
           {/* DATE */}
           <div className="w-full">
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-2">
               Date
             </label>
 
@@ -384,30 +428,47 @@ export default function BusinessHoursPage() {
                 return `${year}-${month}-${day}`;
               })()}
               onChange={(e) => setSpecialDate(e.target.value)}
-              className="w-full border border-slate-200/80 bg-white rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+              className="w-full border border-slate-200/80 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl px-3 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
             />
           </div>
 
           {/* TYPE */}
           <div className="w-full">
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-2">
               Type
             </label>
 
             <select
               value={specialType}
               onChange={(e) => setSpecialType(e.target.value)}
-              className="w-full border border-slate-200/80 bg-white rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+              className="w-full border border-slate-200/80 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl px-3 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
             >
-              <option value="FULL_DAY">Full Day (24h)</option>
-              <option value="NORMAL">Normal</option>
-              <option value="CLOSED">Closed</option>
+              <option
+                value="FULL_DAY"
+                className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
+              >
+                Full Day (24h)
+              </option>
+
+              <option
+                value="NORMAL"
+                className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
+              >
+                Normal
+              </option>
+
+              <option
+                value="CLOSED"
+                className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
+              >
+                Closed
+              </option>
             </select>
           </div>
 
           {/* REASON */}
           <div className="w-full">
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-2">
               Reason
             </label>
 
@@ -416,7 +477,7 @@ export default function BusinessHoursPage() {
               value={specialReason}
               onChange={(e) => setSpecialReason(e.target.value)}
               placeholder="Eid-ul-Fitr"
-              className="w-full border border-slate-200/80 bg-white rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+              className="w-full border border-slate-200/80 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl px-3 py-2.5 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
             />
           </div>
 
@@ -432,13 +493,13 @@ export default function BusinessHoursPage() {
 
         {/* SPECIAL LIST */}
         <div className="mt-6 space-y-3">
-          <h3 className="text-sm font-bold text-slate-800 mb-3">
+          <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 mb-3">
             Configured Special Dates
           </h3>
 
           {specialHours.length === 0 ? (
-            <div className="py-8 px-4 text-center border border-dashed border-slate-200 rounded-xl">
-              <p className="text-slate-500 text-sm">
+            <div className="py-8 px-4 text-center border border-dashed border-slate-200 dark:border-slate-700 rounded-xl">
+              <p className="text-slate-500 dark:text-slate-400 text-sm">
                 No special business hours added.
               </p>
             </div>
@@ -446,15 +507,15 @@ export default function BusinessHoursPage() {
             specialHours.map((item) => (
               <div
                 key={item.id}
-                className="border border-slate-100 bg-slate-50/40 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+                className="border border-slate-100 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-800/60 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
               >
                 {/* DATE + REASON */}
                 <div className="min-w-0">
-                  <p className="font-semibold text-slate-900 text-sm">
+                  <p className="font-semibold text-slate-900 dark:text-slate-100 text-sm">
                     {new Date(item.date).toLocaleDateString()}
                   </p>
 
-                  <p className="text-slate-500 text-xs mt-0.5 break-words">
+                  <p className="text-slate-500 dark:text-slate-400 text-xs mt-0.5 break-words">
                     {item.reason || "Special Day"}
                   </p>
                 </div>
@@ -464,10 +525,10 @@ export default function BusinessHoursPage() {
                   <span
                     className={`font-semibold text-xs px-2.5 py-1.5 rounded-md border text-center whitespace-nowrap ${
                       item.type === "CLOSED"
-                        ? "bg-rose-50 border-rose-100 text-rose-600"
+                        ? "bg-rose-50 dark:bg-rose-500/10 border-rose-100 dark:border-rose-500/30 text-rose-600 dark:text-rose-400"
                         : item.type === "FULL_DAY"
-                        ? "bg-emerald-50 border-emerald-100 text-emerald-600"
-                        : "bg-blue-50 border-blue-100 text-blue-600"
+                        ? "bg-emerald-50 dark:bg-emerald-500/10 border-emerald-100 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
+                        : "bg-blue-50 dark:bg-blue-500/10 border-blue-100 dark:border-blue-500/30 text-blue-600 dark:text-blue-400"
                     }`}
                   >
                     {item.type === "FULL_DAY"
@@ -480,7 +541,7 @@ export default function BusinessHoursPage() {
                   <button
                     onClick={() => deleteSpecialHour(item.id)}
                     disabled={deletingSpecialId === item.id}
-                    className="rounded-xl bg-rose-50 border border-rose-100 text-rose-600 px-3 py-2 text-xs font-semibold hover:bg-rose-100 transition disabled:opacity-50 whitespace-nowrap"
+                    className="rounded-xl bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/30 text-rose-600 dark:text-rose-400 px-3 py-2 text-xs font-semibold hover:bg-rose-100 dark:hover:bg-rose-500/20 transition disabled:opacity-50 whitespace-nowrap"
                   >
                     {deletingSpecialId === item.id
                       ? "Deleting..."
