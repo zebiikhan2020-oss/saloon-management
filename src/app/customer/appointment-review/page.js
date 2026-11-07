@@ -259,7 +259,9 @@ export default function AppointmentReviewPage() {
   // PAGINATION CALCULATION
   // =====================================================
 
-  const totalPages = Math.ceil(appointments.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(
+    appointments.length / ITEMS_PER_PAGE
+  );
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
 
@@ -277,6 +279,7 @@ export default function AppointmentReviewPage() {
       <div className="min-h-screen bg-slate-50/60 dark:bg-slate-950 p-6 flex items-center justify-center">
         <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-800 p-12 text-center max-w-sm w-full">
           <div className="w-8 h-8 border-4 border-pink-600 dark:border-pink-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+
           <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
             Loading...
           </p>
@@ -295,6 +298,7 @@ export default function AppointmentReviewPage() {
         <div className="mx-auto max-w-2xl">
 
           {/* BACK BUTTON */}
+
           <button
             onClick={backToReviews}
             className="mb-6 inline-flex items-center gap-1.5 text-xs font-bold text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 bg-pink-50 dark:bg-pink-950/40 border border-pink-100 dark:border-pink-900/60 px-3 py-1.5 rounded-full transition cursor-pointer"
@@ -303,6 +307,7 @@ export default function AppointmentReviewPage() {
           </button>
 
           {/* HEADER */}
+
           <div className="mb-6">
             <span className="text-xs font-bold uppercase tracking-wider text-pink-600 dark:text-pink-400 bg-pink-50 dark:bg-pink-950/40 border border-pink-100 dark:border-pink-900/60 px-3 py-1 rounded-full">
               ✨ Feedback
@@ -318,6 +323,7 @@ export default function AppointmentReviewPage() {
           </div>
 
           {/* SUCCESS MESSAGE */}
+
           {message && (
             <div className="mb-6 rounded-2xl border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50 dark:bg-emerald-950/30 p-4 text-emerald-700 dark:text-emerald-300 text-xs font-semibold flex items-center gap-2">
               <span>✅</span>
@@ -326,6 +332,7 @@ export default function AppointmentReviewPage() {
           )}
 
           {/* ERROR MESSAGE */}
+
           {error && (
             <div className="mb-6 rounded-2xl border border-rose-200 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/30 p-4 text-rose-700 dark:text-rose-300 text-xs font-semibold flex items-center gap-2">
               <span>⚠️</span>
@@ -334,12 +341,14 @@ export default function AppointmentReviewPage() {
           )}
 
           {/* APPOINTMENT DETAILS CARD */}
+
           <div className="mb-6 rounded-2xl bg-white dark:bg-slate-900 p-6 shadow-sm border border-slate-200/80 dark:border-slate-800">
             <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-4">
               Appointment Details
             </h2>
 
             <div className="space-y-3 text-sm">
+
               <div className="flex justify-between gap-4 py-2 border-b border-slate-100 dark:border-slate-800">
                 <span className="text-slate-500 dark:text-slate-400 font-medium">
                   Service
@@ -379,12 +388,15 @@ export default function AppointmentReviewPage() {
                   {selectedAppointment.staff?.name || "Any Available Staff"}
                 </span>
               </div>
+
             </div>
           </div>
 
           {/* EXISTING REVIEW CARD */}
+
           {existingReview && (
             <div className="rounded-2xl bg-white dark:bg-slate-900 p-6 shadow-sm border border-slate-200/80 dark:border-slate-800 space-y-4">
+
               <div>
                 <h2 className="font-bold text-slate-900 dark:text-slate-100 text-base">
                   Review Already Submitted
@@ -396,6 +408,7 @@ export default function AppointmentReviewPage() {
               </div>
 
               {/* RATING */}
+
               <div className="bg-slate-50/70 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700 rounded-xl p-4">
                 <span className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-1">
                   Your Rating
@@ -417,6 +430,7 @@ export default function AppointmentReviewPage() {
               </div>
 
               {/* COMMENT */}
+
               {existingReview.comment && (
                 <div className="bg-slate-50/70 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700 rounded-xl p-4">
                   <span className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-1">
@@ -428,15 +442,18 @@ export default function AppointmentReviewPage() {
                   </p>
                 </div>
               )}
+
             </div>
           )}
 
           {/* NEW REVIEW FORM */}
+
           {!existingReview && (
             <form
               onSubmit={handleSubmit}
               className="rounded-2xl bg-white dark:bg-slate-900 p-6 shadow-sm border border-slate-200/80 dark:border-slate-800 space-y-6"
             >
+
               <div>
                 <h2 className="font-bold text-slate-900 dark:text-slate-100 text-base">
                   Rate Your Experience
@@ -448,6 +465,7 @@ export default function AppointmentReviewPage() {
               </div>
 
               {/* RATING */}
+
               <div>
                 <div className="flex items-center gap-1.5">
                   {[1, 2, 3, 4, 5].map((star) => (
@@ -472,6 +490,7 @@ export default function AppointmentReviewPage() {
               </div>
 
               {/* COMMENT */}
+
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-2">
                   Comment (Optional)
@@ -487,6 +506,7 @@ export default function AppointmentReviewPage() {
               </div>
 
               {/* SUBMIT BUTTON */}
+
               <button
                 type="submit"
                 disabled={submitting}
@@ -494,6 +514,7 @@ export default function AppointmentReviewPage() {
               >
                 {submitting ? "Submitting..." : "Submit Review"}
               </button>
+
             </form>
           )}
 
@@ -511,6 +532,7 @@ export default function AppointmentReviewPage() {
       <div className="mx-auto max-w-3xl">
 
         {/* HEADER */}
+
         <div className="mb-8">
           <span className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900/60 px-3 py-1 rounded-full">
             ✨ Feedback Management
@@ -526,6 +548,7 @@ export default function AppointmentReviewPage() {
         </div>
 
         {/* ERROR */}
+
         {error && (
           <div className="mb-6 rounded-2xl border border-rose-200 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/30 p-4 text-rose-700 dark:text-rose-300 text-xs font-semibold flex items-center gap-2">
             <span>⚠️</span>
@@ -534,6 +557,7 @@ export default function AppointmentReviewPage() {
         )}
 
         {/* NO COMPLETED APPOINTMENTS */}
+
         {appointments.length === 0 ? (
           <div className="rounded-2xl bg-white dark:bg-slate-900 p-16 text-center shadow-sm border border-slate-200/80 dark:border-slate-800">
             <span className="text-4xl mb-3 block">📅</span>
@@ -560,13 +584,16 @@ export default function AppointmentReviewPage() {
                     key={appointment.id}
                     className="rounded-2xl bg-white dark:bg-slate-900 p-6 shadow-sm border border-slate-200/80 dark:border-slate-800 transition hover:shadow-md"
                   >
+
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+
                       <div>
                         <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">
                           {appointment.service?.name || "Salon Service"}
                         </h2>
 
                         <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-slate-500 dark:text-slate-400 font-medium">
+
                           <span className="flex items-center gap-1 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 px-2.5 py-1 rounded-lg">
                             📅{" "}
                             {new Date(
@@ -583,6 +610,7 @@ export default function AppointmentReviewPage() {
                             {appointment.staff?.name ||
                               "Any Available Staff"}
                           </span>
+
                         </div>
                       </div>
 
@@ -597,12 +625,14 @@ export default function AppointmentReviewPage() {
                           ⏳ Review Pending
                         </span>
                       )}
+
                     </div>
 
                     {/* EXISTING REVIEW PREVIEW */}
 
                     {hasReview && (
                       <div className="mt-4 rounded-xl bg-slate-50/70 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700 p-4">
+
                         <div className="flex items-center gap-1 text-sm text-amber-400">
                           {"★".repeat(appointment.review.rating)}
 
@@ -620,6 +650,7 @@ export default function AppointmentReviewPage() {
                             "{appointment.review.comment}"
                           </p>
                         )}
+
                       </div>
                     )}
 
@@ -634,22 +665,24 @@ export default function AppointmentReviewPage() {
                         Leave a Review
                       </button>
                     )}
+
                   </div>
                 );
               })}
             </div>
 
-            {/* =========================
-                PAGINATION
-            ========================= */}
+            {/* ==========================================
+                RESPONSIVE PAGINATION
+            ========================================== */}
 
             {totalPages > 1 && (
-              <div className="mt-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 px-4 py-4 sm:px-5">
+              <div className="mt-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 px-3 py-4 sm:px-5">
+
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 
                   {/* PAGE INFO */}
 
-                  <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                  <p className="text-center text-xs font-medium text-slate-500 dark:text-slate-400 sm:text-left">
                     Showing{" "}
                     <span className="font-bold text-slate-700 dark:text-slate-200">
                       {startIndex + 1}
@@ -668,27 +701,33 @@ export default function AppointmentReviewPage() {
                     reviews
                   </p>
 
-                  {/* PAGINATION BUTTONS */}
+                  {/* PAGINATION CONTROLS */}
 
-                  <div className="flex items-center justify-center gap-1.5">
+                  <div className="flex w-full items-center justify-between gap-2 sm:w-auto sm:justify-center sm:gap-1.5">
 
                     {/* PREVIOUS */}
 
                     <button
                       type="button"
                       onClick={() =>
-                        setCurrentPage((page) => Math.max(1, page - 1))
+                        setCurrentPage((page) =>
+                          Math.max(1, page - 1)
+                        )
                       }
                       disabled={currentPage === 1}
                       className="
-                        rounded-lg
+                        flex-1
+                        sm:flex-none
+                        whitespace-nowrap
+                        rounded-xl
                         border
                         border-slate-200
                         dark:border-slate-700
                         bg-white
                         dark:bg-slate-800
                         px-3
-                        py-2
+                        py-2.5
+                        sm:py-2
                         text-xs
                         font-bold
                         text-slate-600
@@ -703,9 +742,17 @@ export default function AppointmentReviewPage() {
                       ← Previous
                     </button>
 
-                    {/* PAGE NUMBERS */}
+                    {/* MOBILE PAGE INFO */}
 
-                    <div className="flex items-center gap-1">
+                    <div className="flex shrink-0 items-center justify-center px-2 sm:hidden">
+                      <span className="whitespace-nowrap text-xs font-bold text-slate-700 dark:text-slate-200">
+                        {currentPage} / {totalPages}
+                      </span>
+                    </div>
+
+                    {/* DESKTOP PAGE NUMBERS */}
+
+                    <div className="hidden items-center gap-1 sm:flex">
                       {Array.from(
                         { length: totalPages },
                         (_, index) => index + 1
@@ -715,10 +762,10 @@ export default function AppointmentReviewPage() {
                           type="button"
                           onClick={() => setCurrentPage(page)}
                           className={`
-                            h-8
-                            min-w-8
-                            rounded-lg
-                            px-2
+                            h-9
+                            min-w-9
+                            rounded-xl
+                            px-3
                             text-xs
                             font-bold
                             transition
@@ -745,14 +792,18 @@ export default function AppointmentReviewPage() {
                       }
                       disabled={currentPage === totalPages}
                       className="
-                        rounded-lg
+                        flex-1
+                        sm:flex-none
+                        whitespace-nowrap
+                        rounded-xl
                         border
                         border-slate-200
                         dark:border-slate-700
                         bg-white
                         dark:bg-slate-800
                         px-3
-                        py-2
+                        py-2.5
+                        sm:py-2
                         text-xs
                         font-bold
                         text-slate-600
@@ -766,14 +817,15 @@ export default function AppointmentReviewPage() {
                     >
                       Next →
                     </button>
+
                   </div>
                 </div>
               </div>
             )}
+
           </>
         )}
       </div>
     </div>
   );
 }
-

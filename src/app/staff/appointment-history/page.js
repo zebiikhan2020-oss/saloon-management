@@ -185,6 +185,8 @@ export default function StaffAppointmentHistoryPage() {
 
           <div className="space-y-4">
 
+            {/* APPOINTMENT CARDS */}
+
             {currentAppointments.map((item) => (
               <div
                 key={item.id}
@@ -329,14 +331,52 @@ export default function StaffAppointmentHistoryPage() {
               </div>
             ))}
 
-            {/* =================================================
-                NUMBERED PAGINATION
-            ================================================= */}
+            {/* =====================================================
+                RESPONSIVE PAGINATION
+            ===================================================== */}
 
             {totalPages > 1 && (
               <div className="mt-6 flex flex-col items-center justify-center gap-3">
 
-                <div className="flex items-center gap-2">
+                {/* MOBILE PAGINATION */}
+
+                <div className="flex sm:hidden w-full items-center justify-center gap-3">
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setCurrentPage((page) =>
+                        Math.max(page - 1, 1)
+                      )
+                    }
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-40 transition"
+                  >
+                    Previous
+                  </button>
+
+                  <span className="text-xs font-bold text-slate-700 dark:text-slate-300 whitespace-nowrap">
+                    Page {currentPage} / {totalPages}
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setCurrentPage((page) =>
+                        Math.min(page + 1, totalPages)
+                      )
+                    }
+                    disabled={currentPage === totalPages}
+                    className="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-40 transition"
+                  >
+                    Next
+                  </button>
+
+                </div>
+
+                {/* DESKTOP PAGINATION */}
+
+                <div className="hidden sm:flex items-center gap-2">
 
                   {/* PREVIOUS */}
 
@@ -390,6 +430,8 @@ export default function StaffAppointmentHistoryPage() {
 
                 </div>
 
+                {/* RESULTS COUNT */}
+
                 <p className="text-xs text-slate-500 dark:text-slate-400">
                   Showing {startIndex + 1}–
                   {Math.min(
@@ -409,4 +451,3 @@ export default function StaffAppointmentHistoryPage() {
     </div>
   );
 }
-

@@ -253,7 +253,7 @@ export default function CustomerLayout({ children }) {
 
       <aside
         className={[
-          "fixed top-0 left-0 right-auto z-50 h-screen overflow-visible",
+          "fixed top-0 left-0 right-auto z-50 h-[100dvh] max-h-[100dvh] overflow-hidden",
           "w-64",
           sidebarCollapsed
             ? "lg:w-20"
@@ -630,7 +630,7 @@ export default function CustomerLayout({ children }) {
               {/* NOTIFICATION DROPDOWN */}
 
               {showNotifications && (
-                <div className="absolute right-0 mt-3 w-[360px] max-w-[90vw] bg-white dark:bg-slate-900 rounded-2xl shadow-[0_15px_40px_rgba(15,23,42,0.12)] dark:shadow-black/40 border border-slate-100 dark:border-slate-800 z-[9999] overflow-hidden">
+                <div className="absolute right-0 mt-3 translate-x-4 sm:translate-x-4 w-[360px] max-w-[90vw] bg-white dark:bg-slate-900 rounded-2xl shadow-[0_15px_40px_rgba(15,23,42,0.12)] dark:shadow-black/40 border border-slate-100 dark:border-slate-800 z-[9999] overflow-hidden">
 
                   {/* DROPDOWN HEADER */}
 

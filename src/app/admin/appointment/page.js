@@ -18,7 +18,7 @@ export default function AdminAppointmentPage() {
   // ==============================
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const ITEMS_PER_PAGE = 8;
 
   // ==============================
   // DARK MODE
@@ -111,18 +111,30 @@ export default function AdminAppointmentPage() {
   // PAGINATION
   // ==============================
 
-  const totalPages = Math.ceil(
-    appointments.length / itemsPerPage
+  const totalPages = Math.max(
+    1,
+    Math.ceil(appointments.length / ITEMS_PER_PAGE)
   );
 
   const startIndex =
-    (currentPage - 1) * itemsPerPage;
+    (currentPage - 1) * ITEMS_PER_PAGE;
 
-  const endIndex =
-    startIndex + itemsPerPage;
+  const endIndex = Math.min(
+    startIndex + ITEMS_PER_PAGE,
+    appointments.length
+  );
 
-  const currentAppointments =
-    appointments.slice(startIndex, endIndex);
+  const currentAppointments = appointments.slice(
+    startIndex,
+    endIndex
+  );
+
+  // Keep current page within available pages
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
 
   // ==============================
   // STAFF AVAILABILITY
@@ -531,7 +543,7 @@ export default function AdminAppointmentPage() {
             RESULT COUNT
         ================================================= */}
 
-        {!loading && (
+        {!loading && appointments.length > 0 && (
           <div className="flex items-center justify-between px-1">
             <p
               className={`text-xs font-medium ${
@@ -548,12 +560,19 @@ export default function AdminAppointmentPage() {
                     : "text-slate-900"
                 }`}
               >
+                {startIndex + 1} - {endIndex}
+              </span>{" "}
+              of{" "}
+              <span
+                className={`font-bold ${
+                  darkMode
+                    ? "text-slate-100"
+                    : "text-slate-900"
+                }`}
+              >
                 {appointments.length}
               </span>{" "}
-              appointment{" "}
-              {appointments.length === 1
-                ? "record"
-                : "records"}
+              appointments
             </p>
           </div>
         )}
@@ -1155,40 +1174,11 @@ export default function AdminAppointmentPage() {
             ================================================= */}
 
             {totalPages > 1 && (
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+              <div className="pt-2">
 
-                <p
-                  className={`text-xs font-medium ${
-                    darkMode
-                      ? "text-slate-400"
-                      : "text-slate-500"
-                  }`}
-                >
-                  Page{" "}
-                  <span
-                    className={`font-bold ${
-                      darkMode
-                        ? "text-slate-100"
-                        : "text-slate-900"
-                    }`}
-                  >
-                    {currentPage}
-                  </span>{" "}
-                  of{" "}
-                  <span
-                    className={`font-bold ${
-                      darkMode
-                        ? "text-slate-100"
-                        : "text-slate-900"
-                    }`}
-                  >
-                    {totalPages}
-                  </span>
-                </p>
+                {/* MOBILE PAGINATION */}
 
-                <div className="flex items-center gap-1.5">
-
-                  {/* PREVIOUS */}
+                <div className="flex lg:hidden items-center justify-between gap-3">
 
                   <button
                     type="button"
@@ -1198,7 +1188,7 @@ export default function AdminAppointmentPage() {
                         Math.max(prev - 1, 1)
                       )
                     }
-                    className={`px-3 py-2 rounded-xl border text-xs font-semibold transition ${
+                    className={`px-3 py-2.5 rounded-xl border text-xs font-semibold transition ${
                       currentPage === 1
                         ? darkMode
                           ? "bg-slate-900 border-slate-800 text-slate-600 cursor-not-allowed"
@@ -1211,39 +1201,19 @@ export default function AdminAppointmentPage() {
                     ← Previous
                   </button>
 
-                  {/* PAGE NUMBERS */}
-
-                  <div className="flex items-center gap-1">
-                    {Array.from(
-                      { length: totalPages },
-                      (_, index) => index + 1
-                    ).map((page) => (
-                      <button
-                        key={page}
-                        type="button"
-                        onClick={() =>
-                          setCurrentPage(page)
-                        }
-                        className={`min-w-9 h-9 px-2 rounded-xl text-xs font-bold transition ${
-                          currentPage === page
-                            ? "bg-blue-600 text-white shadow-sm"
-                            : darkMode
-                            ? "bg-slate-900 border border-slate-700 text-slate-300 hover:bg-slate-800"
-                            : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
-                        }`}
-                      >
-                        {page}
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* NEXT */}
+                  <span
+                    className={`text-xs font-semibold whitespace-nowrap ${
+                      darkMode
+                        ? "text-slate-300"
+                        : "text-slate-600"
+                    }`}
+                  >
+                    Page {currentPage} / {totalPages}
+                  </span>
 
                   <button
                     type="button"
-                    disabled={
-                      currentPage === totalPages
-                    }
+                    disabled={currentPage === totalPages}
                     onClick={() =>
                       setCurrentPage((prev) =>
                         Math.min(
@@ -1252,7 +1222,7 @@ export default function AdminAppointmentPage() {
                         )
                       )
                     }
-                    className={`px-3 py-2 rounded-xl border text-xs font-semibold transition ${
+                    className={`px-3 py-2.5 rounded-xl border text-xs font-semibold transition ${
                       currentPage === totalPages
                         ? darkMode
                           ? "bg-slate-900 border-slate-800 text-slate-600 cursor-not-allowed"
@@ -1264,7 +1234,119 @@ export default function AdminAppointmentPage() {
                   >
                     Next →
                   </button>
+                </div>
 
+                {/* DESKTOP PAGINATION */}
+
+                <div className="hidden lg:flex items-center justify-between gap-4">
+
+                  <p
+                    className={`text-xs font-medium ${
+                      darkMode
+                        ? "text-slate-400"
+                        : "text-slate-500"
+                    }`}
+                  >
+                    Page{" "}
+                    <span
+                      className={`font-bold ${
+                        darkMode
+                          ? "text-slate-100"
+                          : "text-slate-900"
+                      }`}
+                    >
+                      {currentPage}
+                    </span>{" "}
+                    of{" "}
+                    <span
+                      className={`font-bold ${
+                        darkMode
+                          ? "text-slate-100"
+                          : "text-slate-900"
+                      }`}
+                    >
+                      {totalPages}
+                    </span>
+                  </p>
+
+                  <div className="flex items-center gap-1.5">
+
+                    {/* PREVIOUS */}
+
+                    <button
+                      type="button"
+                      disabled={currentPage === 1}
+                      onClick={() =>
+                        setCurrentPage((prev) =>
+                          Math.max(prev - 1, 1)
+                        )
+                      }
+                      className={`w-9 h-9 rounded-xl border flex items-center justify-center text-sm font-semibold transition ${
+                        currentPage === 1
+                          ? darkMode
+                            ? "bg-slate-900 border-slate-800 text-slate-600 cursor-not-allowed"
+                            : "bg-slate-50 border-slate-100 text-slate-300 cursor-not-allowed"
+                          : darkMode
+                          ? "bg-slate-900 border-slate-700 text-slate-300 hover:bg-slate-800"
+                          : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+                      }`}
+                    >
+                      ←
+                    </button>
+
+                    {/* PAGE NUMBERS */}
+
+                    <div className="flex items-center gap-1">
+                      {Array.from(
+                        { length: totalPages },
+                        (_, index) => index + 1
+                      ).map((page) => (
+                        <button
+                          key={page}
+                          type="button"
+                          onClick={() =>
+                            setCurrentPage(page)
+                          }
+                          className={`w-9 h-9 rounded-xl text-xs font-bold transition ${
+                            currentPage === page
+                              ? "bg-blue-600 dark:bg-blue-500 text-white shadow-sm"
+                              : darkMode
+                              ? "bg-slate-900 border border-slate-700 text-slate-300 hover:bg-slate-800"
+                              : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
+                          }`}
+                        >
+                          {page}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* NEXT */}
+
+                    <button
+                      type="button"
+                      disabled={currentPage === totalPages}
+                      onClick={() =>
+                        setCurrentPage((prev) =>
+                          Math.min(
+                            prev + 1,
+                            totalPages
+                          )
+                        )
+                      }
+                      className={`w-9 h-9 rounded-xl border flex items-center justify-center text-sm font-semibold transition ${
+                        currentPage === totalPages
+                          ? darkMode
+                            ? "bg-slate-900 border-slate-800 text-slate-600 cursor-not-allowed"
+                            : "bg-slate-50 border-slate-100 text-slate-300 cursor-not-allowed"
+                          : darkMode
+                          ? "bg-slate-900 border-slate-700 text-slate-300 hover:bg-slate-800"
+                          : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+                      }`}
+                    >
+                      →
+                    </button>
+
+                  </div>
                 </div>
               </div>
             )}
@@ -1274,4 +1356,3 @@ export default function AdminAppointmentPage() {
     </div>
   );
 }
-

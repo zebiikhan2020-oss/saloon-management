@@ -66,6 +66,7 @@ model User {
   attendances             Attendance[]
   leaveRequests           LeaveRequest[]
   notifications           Notification[]
+  aiConversations         AIConversation[]
   portfolioReviews        PortfolioReview[]
   portfolio               StaffPortfolio[]
   staffProfile            StaffProfile?
@@ -257,4 +258,33 @@ enum PaymentStatus {
   PAID
   FAILED
   REFUNDED
+}
+
+// ========================================
+// AI ADMIN CHAT HISTORY
+// ========================================
+
+model AIConversation {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String   @default("New Chat")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user     User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages AIMessage[]
+
+  @@index([userId, updatedAt])
+}
+
+model AIMessage {
+  id             String   @id @default(cuid())
+  conversationId String
+  role           String
+  content        String
+  createdAt      DateTime @default(now())
+
+  conversation AIConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, createdAt])
 }

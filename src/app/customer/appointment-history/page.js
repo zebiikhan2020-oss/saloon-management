@@ -46,9 +46,12 @@ export default function CustomerAppointmentHistory() {
   // PAGINATION CALCULATION
   // =========================
 
-  const totalPages = Math.ceil(appointments.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(
+    appointments.length / ITEMS_PER_PAGE
+  );
 
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const startIndex =
+    (currentPage - 1) * ITEMS_PER_PAGE;
 
   const currentAppointments = appointments.slice(
     startIndex,
@@ -161,9 +164,7 @@ export default function CustomerAppointmentHistory() {
 
         <div className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
 
-          {/* =========================
-              LOADING
-          ========================= */}
+          {/* LOADING */}
 
           {loading ? (
             <div className="flex min-h-[280px] flex-col items-center justify-center px-5 py-12 text-center">
@@ -178,9 +179,8 @@ export default function CustomerAppointmentHistory() {
               </p>
             </div>
           ) : appointments.length === 0 ? (
-            /* =========================
-               NO APPOINTMENTS
-            ========================= */
+
+            /* NO APPOINTMENTS */
 
             <div className="flex min-h-[320px] flex-col items-center justify-center px-5 py-12 text-center">
               <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-950/40 text-3xl">
@@ -220,8 +220,10 @@ export default function CustomerAppointmentHistory() {
                 Book Your First Appointment
               </Link>
             </div>
+
           ) : (
             <>
+
               {/* =========================
                   MOBILE + TABLET
               ========================= */}
@@ -238,6 +240,7 @@ export default function CustomerAppointmentHistory() {
                       sm:p-5
                     "
                   >
+
                     {/* TOP */}
 
                     <div className="flex items-start justify-between gap-3">
@@ -303,6 +306,7 @@ export default function CustomerAppointmentHistory() {
                             : ""}
                         </p>
                       </div>
+
                     </div>
                   </div>
                 ))}
@@ -349,6 +353,7 @@ export default function CustomerAppointmentHistory() {
                           key={appointment.id}
                           className="transition hover:bg-slate-50/70 dark:hover:bg-slate-800/50"
                         >
+
                           {/* SERVICE */}
 
                           <td className="px-6 py-4">
@@ -400,6 +405,7 @@ export default function CustomerAppointmentHistory() {
                               {appointment.status}
                             </span>
                           </td>
+
                         </tr>
                       ))}
                     </tbody>
@@ -408,16 +414,16 @@ export default function CustomerAppointmentHistory() {
               </div>
 
               {/* =========================
-                  PAGINATION
+                  RESPONSIVE PAGINATION
               ========================= */}
 
               {totalPages > 1 && (
-                <div className="border-t border-slate-100 dark:border-slate-800 px-4 py-4 sm:px-6">
+                <div className="border-t border-slate-100 dark:border-slate-800 px-3 py-4 sm:px-6">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 
                     {/* PAGE INFO */}
 
-                    <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                    <p className="text-xs font-medium text-slate-500 dark:text-slate-400 text-center sm:text-left">
                       Showing{" "}
                       <span className="font-bold text-slate-700 dark:text-slate-200">
                         {startIndex + 1}
@@ -436,19 +442,24 @@ export default function CustomerAppointmentHistory() {
                       appointments
                     </p>
 
-                    {/* PAGINATION BUTTONS */}
+                    {/* PAGINATION CONTROLS */}
 
-                    <div className="flex items-center justify-center gap-1.5">
+                    <div className="flex w-full items-center justify-between gap-2 sm:w-auto sm:justify-center sm:gap-1.5">
 
                       {/* PREVIOUS */}
 
                       <button
                         type="button"
                         onClick={() =>
-                          setCurrentPage((page) => Math.max(1, page - 1))
+                          setCurrentPage((page) =>
+                            Math.max(1, page - 1)
+                          )
                         }
                         disabled={currentPage === 1}
                         className="
+                          flex-1
+                          sm:flex-none
+                          whitespace-nowrap
                           rounded-lg
                           border
                           border-slate-200
@@ -456,7 +467,8 @@ export default function CustomerAppointmentHistory() {
                           bg-white
                           dark:bg-slate-800
                           px-3
-                          py-2
+                          py-2.5
+                          sm:py-2
                           text-xs
                           font-bold
                           text-slate-600
@@ -471,9 +483,17 @@ export default function CustomerAppointmentHistory() {
                         ← Previous
                       </button>
 
-                      {/* PAGE NUMBERS */}
+                      {/* MOBILE CURRENT PAGE */}
 
-                      <div className="flex items-center gap-1">
+                      <div className="flex shrink-0 items-center justify-center px-2 sm:hidden">
+                        <span className="text-xs font-bold text-slate-700 dark:text-slate-200 whitespace-nowrap">
+                          {currentPage} / {totalPages}
+                        </span>
+                      </div>
+
+                      {/* DESKTOP PAGE NUMBERS */}
+
+                      <div className="hidden sm:flex items-center gap-1">
                         {Array.from(
                           { length: totalPages },
                           (_, index) => index + 1
@@ -481,7 +501,9 @@ export default function CustomerAppointmentHistory() {
                           <button
                             key={page}
                             type="button"
-                            onClick={() => setCurrentPage(page)}
+                            onClick={() =>
+                              setCurrentPage(page)
+                            }
                             className={`
                               h-8
                               min-w-8
@@ -513,6 +535,9 @@ export default function CustomerAppointmentHistory() {
                         }
                         disabled={currentPage === totalPages}
                         className="
+                          flex-1
+                          sm:flex-none
+                          whitespace-nowrap
                           rounded-lg
                           border
                           border-slate-200
@@ -520,7 +545,8 @@ export default function CustomerAppointmentHistory() {
                           bg-white
                           dark:bg-slate-800
                           px-3
-                          py-2
+                          py-2.5
+                          sm:py-2
                           text-xs
                           font-bold
                           text-slate-600
@@ -534,10 +560,12 @@ export default function CustomerAppointmentHistory() {
                       >
                         Next →
                       </button>
+
                     </div>
                   </div>
                 </div>
               )}
+
             </>
           )}
         </div>
@@ -562,8 +590,8 @@ export default function CustomerAppointmentHistory() {
             </Link>
           </div>
         )}
+
       </div>
     </div>
   );
 }
-

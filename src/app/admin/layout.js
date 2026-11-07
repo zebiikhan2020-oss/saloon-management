@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -503,6 +504,11 @@ export default function AdminLayout({ children }) {
       icon: "📊",
     },
     {
+      href: "/admin/ai-assistant",
+      label: "AI Assistant",
+      icon: "🤖",
+    },
+    {
       href: "/admin/appointment",
       label: "Appointments",
       icon: "📅",
@@ -685,7 +691,7 @@ export default function AdminLayout({ children }) {
 
       <aside
         className={[
-          "fixed top-0 left-0 right-auto z-50 h-screen",
+          "fixed top-0 left-0 right-auto z-50 h-[100dvh] max-h-[100dvh] overflow-hidden",
           "w-64",
           "bg-white dark:bg-slate-900 border-r border-slate-100 dark:border-slate-800",
           "flex flex-col",
@@ -917,6 +923,10 @@ export default function AdminLayout({ children }) {
             item={menuItems[0]}
           />
 
+          <NavItem
+            item={menuItems[1]}
+          />
+
           {/* =================================================
               APPOINTMENTS
           ================================================= */}
@@ -939,7 +949,7 @@ export default function AdminLayout({ children }) {
           </div>
 
           {menuItems
-            .slice(1, 3)
+            .slice(2, 4)
             .map((item) => (
               <NavItem
                 key={item.href}
@@ -969,7 +979,7 @@ export default function AdminLayout({ children }) {
           </div>
 
           {menuItems
-            .slice(3, 7)
+            .slice(4, 7)
             .map((item) => (
               <NavItem
                 key={item.href}
@@ -1029,7 +1039,7 @@ export default function AdminLayout({ children }) {
           </div>
 
           {menuItems
-            .slice(10)
+            .slice(11)
             .map((item) => (
               <NavItem
                 key={item.href}
@@ -1389,6 +1399,7 @@ export default function AdminLayout({ children }) {
                 <div className="
                   absolute
                   right-0
+                  translate-x-4
                   mt-3
                   w-[360px]
                   max-w-[calc(100vw-24px)]

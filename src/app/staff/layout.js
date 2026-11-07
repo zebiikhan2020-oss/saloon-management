@@ -375,14 +375,14 @@ export default function StaffLayout({ children }) {
 
   useEffect(() => {
     function handleClickOutside(event) {
-      if (
-        notificationRef.current &&
-        !notificationRef.current.contains(
-          event.target
-        )
-      ) {
-        setShowNotifications(false);
-      }
+     if (
+  notificationRef.current?.contains(event.target) ||
+  event.target.closest("[data-mobile-notifications]")
+) {
+  return;
+}
+
+setShowNotifications(false);
     }
 
     document.addEventListener(
@@ -754,7 +754,7 @@ export default function StaffLayout({ children }) {
 
       <aside
         className={[
-          "fixed top-0 left-0 right-auto z-50 h-screen overflow-visible",
+          "fixed top-0 left-0 right-auto z-50 h-[100dvh] max-h-[100dvh] overflow-hidden",
           "w-64",
 
           sidebarCollapsed
@@ -1276,21 +1276,24 @@ export default function StaffLayout({ children }) {
               {/* NOTIFICATION DROPDOWN */}
 
               {showNotifications && (
-                <div
-                  className="
-                    absolute
-                    right-0
-                    mt-3
-                    w-[360px]
-                    max-w-[90vw]
-                    bg-white dark:bg-slate-900
-                    rounded-2xl
-                    shadow-[0_15px_40px_rgba(15,23,42,0.12)] dark:shadow-black/40
-                    border border-slate-100 dark:border-slate-800
-                    z-[9999]
-                    overflow-hidden
-                  "
-                >
+  <div
+    className="
+      hidden
+      lg:block
+      absolute
+      right-0
+      translate-x-4
+      mt-3
+      w-[360px]
+      max-w-[90vw]
+      bg-white dark:bg-slate-900
+      rounded-2xl
+      shadow-[0_15px_40px_rgba(15,23,42,0.12)] dark:shadow-black/40
+      border border-slate-100 dark:border-slate-800
+      z-[9999]
+      overflow-hidden
+    "
+  >
 
                   {/* HEADER */}
 
@@ -1591,14 +1594,15 @@ export default function StaffLayout({ children }) {
 
       {showNotifications && (
         <div
-          className="
-            lg:hidden
-            fixed
-            top-16
-            right-3
-            z-[9999]
-          "
-        >
+  data-mobile-notifications
+  className="
+    lg:hidden
+    fixed
+    top-16
+    right-3
+    z-[9999]
+  "
+>
 
           <div
             className="

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -234,7 +233,6 @@ export default function MyAppointmentsPage() {
         ========================================== */}
 
         <div className="mb-6 sm:mb-8">
-
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
 
             <div>
@@ -521,7 +519,10 @@ export default function MyAppointmentsPage() {
                             <span className="text-sm">💰</span>
 
                             <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200">
-                             Rs. {appointment.priceAtBooking ?? appointment.service?.price ?? 0}
+                              Rs.{" "}
+                              {appointment.priceAtBooking ??
+                                appointment.service?.price ??
+                                0}
                             </span>
                           </div>
                         </div>
@@ -586,17 +587,18 @@ export default function MyAppointmentsPage() {
                             Leave a Review ✨
                           </button>
                         )}
+
                         {appointment.status === "CONFIRMED" && (
-  <button
-    type="button"
-    onClick={() => {
-      window.location.href = `/customer/appointment/${appointment.id}/invoice`;
-    }}
-    className="w-full rounded-xl bg-blue-600 px-5 py-3 text-xs font-bold text-white shadow-sm transition hover:bg-blue-700 sm:w-auto"
-  >
-    🧾 View Invoice
-  </button>
-)}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              window.location.href = `/customer/appointment/${appointment.id}/invoice`;
+                            }}
+                            className="w-full rounded-xl bg-blue-600 px-5 py-3 text-xs font-bold text-white shadow-sm transition hover:bg-blue-700 sm:w-auto"
+                          >
+                            🧾 View Invoice
+                          </button>
+                        )}
 
                       </div>
 
@@ -608,75 +610,154 @@ export default function MyAppointmentsPage() {
             })}
 
             {/* ==========================================
-                NUMBERED PAGINATION
+                RESPONSIVE PAGINATION
             ========================================== */}
 
             {totalPages > 1 && (
-              <div className="mt-6 flex flex-col items-center justify-center gap-3">
+              <div className="mt-6 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-4 sm:px-5">
 
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 
-                  {/* PREVIOUS */}
+                  {/* PAGE INFO */}
 
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setCurrentPage((page) =>
-                        Math.max(page - 1, 1)
-                      )
-                    }
-                    disabled={currentPage === 1}
-                    className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-40 transition"
-                  >
-                    ←
-                  </button>
+                  <p className="text-center text-xs font-medium text-slate-500 dark:text-slate-400 sm:text-left">
+                    Showing{" "}
+                    <span className="font-bold text-slate-700 dark:text-slate-200">
+                      {startIndex + 1}
+                    </span>
+                    {" - "}
+                    <span className="font-bold text-slate-700 dark:text-slate-200">
+                      {Math.min(
+                        startIndex + ITEMS_PER_PAGE,
+                        appointments.length
+                      )}
+                    </span>{" "}
+                    of{" "}
+                    <span className="font-bold text-slate-700 dark:text-slate-200">
+                      {appointments.length}
+                    </span>{" "}
+                    appointments
+                  </p>
 
-                  {/* PAGE NUMBERS */}
+                  {/* PAGINATION CONTROLS */}
 
-                  {Array.from(
-                    { length: totalPages },
-                    (_, index) => index + 1
-                  ).map((page) => (
+                  <div className="flex w-full items-center justify-between gap-2 sm:w-auto sm:justify-center sm:gap-1.5">
+
+                    {/* PREVIOUS */}
+
                     <button
-                      key={page}
                       type="button"
-                      onClick={() => setCurrentPage(page)}
-                      className={`flex h-9 min-w-9 items-center justify-center rounded-xl px-3 text-xs font-bold transition ${
-                        currentPage === page
-                          ? "bg-blue-600 dark:bg-blue-500 text-white shadow-sm"
-                          : "border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400"
-                      }`}
+                      onClick={() =>
+                        setCurrentPage((page) =>
+                          Math.max(page - 1, 1)
+                        )
+                      }
+                      disabled={currentPage === 1}
+                      className="
+                        flex-1
+                        sm:flex-none
+                        whitespace-nowrap
+                        rounded-xl
+                        border
+                        border-slate-200
+                        dark:border-slate-700
+                        bg-white
+                        dark:bg-slate-800
+                        px-3
+                        py-2.5
+                        sm:py-2
+                        text-xs
+                        font-bold
+                        text-slate-600
+                        dark:text-slate-300
+                        transition
+                        hover:bg-slate-50
+                        dark:hover:bg-slate-700
+                        disabled:cursor-not-allowed
+                        disabled:opacity-40
+                      "
                     >
-                      {page}
+                      ← Previous
                     </button>
-                  ))}
 
-                  {/* NEXT */}
+                    {/* MOBILE PAGE INFO */}
 
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setCurrentPage((page) =>
-                        Math.min(page + 1, totalPages)
-                      )
-                    }
-                    disabled={currentPage === totalPages}
-                    className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-40 transition"
-                  >
-                    →
-                  </button>
+                    <div className="flex shrink-0 items-center justify-center px-2 sm:hidden">
+                      <span className="whitespace-nowrap text-xs font-bold text-slate-700 dark:text-slate-200">
+                        {currentPage} / {totalPages}
+                      </span>
+                    </div>
 
+                    {/* DESKTOP PAGE NUMBERS */}
+
+                    <div className="hidden items-center gap-1 sm:flex">
+                      {Array.from(
+                        { length: totalPages },
+                        (_, index) => index + 1
+                      ).map((page) => (
+                        <button
+                          key={page}
+                          type="button"
+                          onClick={() => setCurrentPage(page)}
+                          className={`
+                            h-9
+                            min-w-9
+                            rounded-xl
+                            px-3
+                            text-xs
+                            font-bold
+                            transition
+                            ${
+                              currentPage === page
+                                ? "bg-blue-600 dark:bg-blue-500 text-white shadow-sm"
+                                : "border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400"
+                            }
+                          `}
+                        >
+                          {page}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* NEXT */}
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setCurrentPage((page) =>
+                          Math.min(page + 1, totalPages)
+                        )
+                      }
+                      disabled={currentPage === totalPages}
+                      className="
+                        flex-1
+                        sm:flex-none
+                        whitespace-nowrap
+                        rounded-xl
+                        border
+                        border-slate-200
+                        dark:border-slate-700
+                        bg-white
+                        dark:bg-slate-800
+                        px-3
+                        py-2.5
+                        sm:py-2
+                        text-xs
+                        font-bold
+                        text-slate-600
+                        dark:text-slate-300
+                        transition
+                        hover:bg-slate-50
+                        dark:hover:bg-slate-700
+                        disabled:cursor-not-allowed
+                        disabled:opacity-40
+                      "
+                    >
+                      Next →
+                    </button>
+
+                  </div>
                 </div>
-
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Showing {startIndex + 1}–
-                  {Math.min(
-                    startIndex + ITEMS_PER_PAGE,
-                    appointments.length
-                  )}{" "}
-                  of {appointments.length} appointments
-                </p>
-
               </div>
             )}
 
@@ -687,4 +768,3 @@ export default function MyAppointmentsPage() {
     </div>
   );
 }
-
